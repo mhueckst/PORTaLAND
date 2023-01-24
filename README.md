@@ -1,5 +1,5 @@
 # PORTaLAND
- 2D platformer puzzle game inspired by Valve's Portal Series
+ 2D platformer puzzle game inspired by Valve's Portal Series<br>
  written by: Tierney McBride, Russ Pedersen, Natasha Naylor, Max Huecksteadt 
 
 ## Language
