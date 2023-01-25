@@ -1,10 +1,8 @@
-Features 
+Features: 
 -Opening menu/screen
 -one level
 -closing screen 
 -cake at the end of the level 
-
-MVP: 
 -Portals working
 
 User stories(?)
