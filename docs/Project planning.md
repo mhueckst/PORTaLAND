@@ -6,7 +6,8 @@ Features:
 5. Portals working
 6. big boss
 7. train
-8. have local features
+8. bridges
+9. other local flavor
 
 MVP:
 1. Opening menu/screen
