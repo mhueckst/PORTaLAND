@@ -5,6 +5,8 @@ Features:
 4. cake at the end of the level 
 5. Portals working
 6. big boss
+7. train
+8. have local features
 
 MVP:
 1. Opening menu/screen
