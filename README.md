@@ -8,5 +8,9 @@ gain more practice in building large python programs.
 
 ## Features
 tbd.
+
+## License
+MIT License. See License.txt.
+
  
 
