@@ -26,7 +26,7 @@
 
 | Title | Description |  Acceptance Criteria |
 | --- | ---- | ---------- |
-| Intro screen | as a player I want to have an intro screen with instructions to play and context for the games objective” | simple to understand playing instructions and a brief intro before the first level |
+| Intro screen | As a player, I want to have an intro screen when I start the game, with instructions on how to play, and context for the games objective | Simple game instructions and background game info before the first level (when the game starts up), until the player selects to continue/play|
 | Closing Screen | as a player I want to have closing screen with cake to know that I’ve beaten the game | a closing screen that states that the game is over and displays a cake. (potentially with music inspired from Portal game? |
 | Basic Level One | as a player I want to have a level complete with the basic assets (player, portal gun, walls that can be made into portals, and walls that can’t) | one playable level |
 | Portals | as a player I want the portals to be visible and transport me from the portal I “enter” to the portal I “exit”. | when the player asset interacts with a portal asset, the player asset’s location should be changed to the location of the second portal asset |
