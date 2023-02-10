@@ -5,35 +5,32 @@ written by the Firm (trying out creepy anonymous corporation names)
 """
 
 import arcade
-import random
-import os
+import pathlib
 
+WIDTH = 800
+HEIGHT = 600
 
-file_path = os.path.dirname(os.path.abspath(__file__))
-os.chdir(file_path)
-
-SCREEN_TITLE = "Instructions"
-SCREEN_WIDTH = 800
-SCREEN_HEIGHT = 600
-SPRITE_SCALING = 0.5
-
+ASSETS_PATH = pathlib.Path(__file__).resolve().parent / "assets"
 
 class InstructionView(arcade.View):
-    def on_show_view(self):
-        arcade.set_background_color(arcade.color.ORANGE_PEEL)
+    def __init__(self):
+        super().__init__()
+        instructions_path = ASSETS_PATH/"images"/"instructions.png"
+        self.instructions_image = arcade.load_texture(instructions_path)
 
-    def on_draw(self):
+    def on_draw(self) -> None:
         self.clear()
-        self.texture = arcade.load_texture("./assets/images/instructions.png")
+        instructions_path = ASSETS_PATH/"images"/"instructions.png"
+        self.texture = arcade.load_texture(instructions_path)
 
-        arcade.set_viewport(0, SCREEN_WIDTH - 1, 0, SCREEN_HEIGHT - 1)
+        arcade.set_viewport(0, WIDTH - 1, 0, HEIGHT - 1)
 
     def on_mouse_press(self, _x, _y, _button, _modifiers):
-        game_view = GameView()
+        game_view = InstructionView()
         self.window.show_view(game_view)
 
 def main():
-    window = arcade.Window(SCREEN_WIDTH, SCREEN_HEIGHT, SCREEN_TITLE)
+    window = arcade.Window(WIDTH, HEIGHT, "Instructions")
     start_view = InstructionView()
     window.show_view(start_view)
 #    start_view.setup()
