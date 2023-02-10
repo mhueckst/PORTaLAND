@@ -24,7 +24,7 @@ class InstructionView(arcade.View):
 
     def on_draw(self):
         self.clear()
-        self.texture = arcade.load_texture("./assets/screen/instructions.png")
+        self.texture = arcade.load_texture("./assets/images/instructions.png")
 
         arcade.set_viewport(0, SCREEN_WIDTH - 1, 0, SCREEN_HEIGHT - 1)
 
