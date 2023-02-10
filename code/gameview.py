@@ -1,5 +1,5 @@
 """
-Screen Classes
+Gameview Class
 
 written by the Firm (trying out creepy anonymous corporation names)
 """
