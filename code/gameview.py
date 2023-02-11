@@ -6,7 +6,9 @@ written by the Firm (trying out creepy anonymous corporation names)
 
 import arcade
 import pathlib
+from typing import Optional
 
+# visual constants
 SCREEN_TITLE = "PORTaLAND"
 
 TILE_SIZE = 32
@@ -21,6 +23,22 @@ TILE_SCALING = 2.0
 
 STARTING_X = TILE_SIZE * 7
 STARTING_Y = TILE_SIZE * 3
+
+# physics constants
+
+GRAVITY = 1500
+
+DEF_DAMPING = 1.0
+PLAYER_DAMPING = 0.4
+
+PLAYER_FRICTION = 1.0
+GROUND_FRICTION = 0.7
+
+PLAYER_MASS = 2.0
+
+PLAYER_MAX_SPEED_HORIZ = 450
+PLAYER_MAX_SPEED_VERT = 1600
+
 
 ASSETS_PATH = pathlib.Path(__file__).resolve().parent.parent / "assets"
 
@@ -39,7 +57,7 @@ class GameView(arcade.View):
 
         self.player = None
 
-        self.physics_engine = None
+        self.physics_engine = Optional[arcade.PymunkPhysicsEngine]
 
         self.level = 1
 
@@ -81,25 +99,34 @@ class GameView(arcade.View):
 
         self.player.append(self.player_sprite)
 
+        damping = DEF_DAMPING
+        gravity = (0, -GRAVITY)
 
 
-        self.physics_engine = arcade.PhysicsEnginePlatformer(
-                player_sprite = self.player,
-                platforms = self.ground,
-                gravity_constant = 1500,
-                ladders = self.ladders,
-            )
+        self.physics_engine = arcade.PymunkPhysicsEngine(damping=damping,gravity=gravity)
+
+        self.physics_engine.add_sprite(self.player_sprite, friction=PLAYER_FRICTION,
+                                       mass=PLAYER_MASS, moment=arcade.PymunkPhysicsEngine.MOMENT_INF,
+                                       collision_type="player", max_horizontal_velocity=PLAYER_MAX_SPEED_HORIZ,
+                                       max_vertical_velocity=PLAYER_MAX_SPEED_VERT)
+        
+        self.physics_engine.add_sprite_list(self.ground, friction = GROUND_FRICTION,
+                                            collision_type="ground", body_type=arcade.PymunkPhysicsEngine.STATIC)
 
 
-
-
+    ''' 
+    def on_mouse_press(self, x, y, button, modifiers):
+        # for testing screen switching functionality before adding gameplay elements
+        game_over = GameOverView()
+        window.show_view(game_over)
+    '''
 
     def on_key_press(self, key, modifiers):
         pass
 
 
     def on_update(self, delta: float) -> None:
-        pass
+        self.physics_engine.step()
 
     def on_draw(self):
         self.clear()
