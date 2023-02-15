@@ -38,7 +38,8 @@ class TitleView(arcade.View):
     def __init__(self):
         super().__init__()
         arcade.set_background_color(arcade.color_from_hex_string("27a7d8"))
-        self.texture = arcade.load_texture("portaland.png")
+        title_path = ASSETS_PATH/"images"/"portaland.png"
+        self.texture = arcade.load_texture(title_path)
 
     def on_show_view(self):
         """ This is run once when we switch to this view """
@@ -73,7 +74,8 @@ class InstructionView(arcade.View):
     def __init__(self):
         super().__init__()
         arcade.set_background_color(arcade.color_from_hex_string("cccc00"))
-        self.texture = arcade.load_texture("instructions.png")
+        instructions_path = ASSETS_PATH/"images"/"instructions.png"
+        self.texture = arcade.load_texture(instructions_path)
 
     def on_show_view(self):
         """ This is run once when we switch to this view """
