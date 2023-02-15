@@ -1,67 +1,67 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.9" tiledversion="1.9.2" orientation="orthogonal" renderorder="right-down" width="25" height="20" tilewidth="16" tileheight="16" infinite="0" nextlayerid="9" nextobjectid="45">
- <tileset firstgid="1" source="../images/others.tsx"/>
- <tileset firstgid="5" source="tiles.tsx"/>
+<map version="1.9" tiledversion="1.9.2" orientation="orthogonal" renderorder="right-down" width="25" height="20" tilewidth="16" tileheight="16" infinite="0" nextlayerid="9" nextobjectid="54">
+ <tileset firstgid="1" source="tiles.tsx"/>
+ <tileset firstgid="385" source="others.tsx"/>
  <objectgroup id="2" name="background">
-  <object id="1" gid="3" x="192" y="320" width="224" height="368"/>
-  <object id="2" gid="4" x="0" y="320" width="192" height="368"/>
+  <object id="49" gid="388" x="0" y="336" width="208" height="368"/>
+  <object id="50" gid="387" x="208" y="336" width="208" height="368"/>
  </objectgroup>
  <objectgroup id="3" name="background2">
-  <object id="4" gid="1" x="128" y="304" width="272" height="188"/>
+  <object id="53" gid="385" x="160" y="304" width="256" height="156"/>
  </objectgroup>
  <layer id="1" name="ground" width="25" height="20">
   <data encoding="base64" compression="zlib">
-   eJwTYWRgEAFiUSDGBsSwiAvjUAsCIoyoGJe5o2AUUArQ0xp6usOWdkkFEYwIPBiBMA7/gwA6fxQQB/ClK2qnr1EwcgAs3cAwtjSFSw5dHS45AMd1Bls=
+   eJwTYGRgEABiQSDGBoSwiPPjUAsCAoyoGJe5o2AUUArQ0xp6usOWdkkFIYwIPBgBPw7/gwA6fxQQB/ClK2qnr1EwcgAs3cAwtjSFSw5dHS45AJGIBU8=
   </data>
  </layer>
  <layer id="8" name="building" width="25" height="20">
   <data encoding="base64" compression="zlib">
-   eJxjYMAPPBgJKCACGGHBIHNBWIVM/cRgmB02VLIDm/qhZgcu9fS0I4QGdpADiLFjPxALAt18EkirkeEOYuyYD8QLgHghENthUTMHiOeS6DcFtHy7HYh3APFOIA7DYscWIN5Kpj9+MkDy8QsgfgnEK3HYcQaIz5JphyAsbQJpRiA+CGTmYVH3BIifEmGHAZo+UNzOZCAu/RMC8PQOxApArAjESgyQuN3IgEj/pJYH2OxIAGILILYEYisGSLhvRFMnDQwvGSCWZSTfjgAgDgTiIBx2GAPNNgFiUwrsyADiTCDOwmGHN9BsHyD2pcAOZPXY7EgGmp0CxKlk2lGBph6URk/i0UdtAADJokmD
+   eJxjYMAPXBgJKCAC6GHBIHNBWIFM/cRgmB0WVLIDm/qhZgcu9fS0I4AGdpADiLFjNxDzAt18FEgrkeEOYuyYDcRzgHguEFthUTMDiGeS6DcZtHy7GYi3APFWIA7CYscGIN5Ipj++MkDy8RMgfgrES3HYcQKIT5JpBy80bf4B4r9AvBeIs7CoewDED4mwQwdNHyhupzIQl/4JAXh6B2IZIJYFYjkGSNyuZUCkf1LLA2x2xACxCRCbArEZAyTc16KpEweGnQQQSzKSb4cPEPsCsR8OO/SBZhsAsSEFdqQAcSoQp+Gwwx1otgcQe1JgB7J6bHbEA81OAOJEMu0oQVMPSqNH8eijNgAAtuJHOQ==
   </data>
  </layer>
  <objectgroup id="6" name="portal walls">
-  <object id="6" gid="89" x="0" y="256" width="16" height="16"/>
-  <object id="7" gid="89" x="0" y="272" width="16" height="16"/>
-  <object id="8" gid="89" x="0" y="288" width="16" height="16"/>
-  <object id="9" gid="89" x="0" y="304" width="16" height="16"/>
-  <object id="10" gid="41" x="0" y="240" width="16" height="16"/>
-  <object id="11" gid="65" x="384" y="304" width="16" height="16"/>
-  <object id="12" gid="65" x="384" y="288" width="16" height="16"/>
-  <object id="13" gid="65" x="384" y="272" width="16" height="16"/>
-  <object id="14" gid="65" x="384" y="256" width="16" height="16"/>
-  <object id="15" gid="65" x="384" y="240" width="16" height="16"/>
-  <object id="16" gid="65" x="384" y="240" width="16" height="16"/>
-  <object id="17" gid="41" x="384" y="240" width="16" height="16"/>
-  <object id="23" gid="41" x="224" y="16" width="16" height="16"/>
-  <object id="24" gid="41" x="240" y="16" width="16" height="16"/>
-  <object id="25" gid="41" x="256" y="16" width="16" height="16"/>
-  <object id="26" gid="41" x="272" y="16" width="16" height="16"/>
-  <object id="27" gid="41" x="288" y="16" width="16" height="16"/>
-  <object id="28" gid="41" x="304" y="16" width="16" height="16"/>
-  <object id="29" gid="41" x="112" y="16" width="16" height="16"/>
-  <object id="31" gid="41" x="96" y="16" width="16" height="16"/>
-  <object id="32" gid="41" x="80" y="16" width="16" height="16"/>
-  <object id="33" gid="41" x="64" y="16" width="16" height="16"/>
-  <object id="34" gid="41" x="48" y="16" width="16" height="16"/>
-  <object id="35" gid="41" x="384" y="80" width="16" height="16"/>
-  <object id="36" gid="65" x="384" y="96" width="16" height="16"/>
-  <object id="37" gid="65" x="384" y="112" width="16" height="16"/>
-  <object id="38" gid="65" x="384" y="128" width="16" height="16"/>
-  <object id="39" gid="65" x="384" y="144" width="16" height="16"/>
-  <object id="40" gid="375" x="128" y="16" width="16" height="16"/>
-  <object id="41" gid="375" x="128" y="16" width="16" height="16"/>
-  <object id="42" gid="347" x="128" y="16" width="16" height="16"/>
-  <object id="43" gid="347" x="128" y="16" width="16" height="16"/>
-  <object id="44" gid="347" x="128" y="16" width="16" height="16"/>
+  <object id="6" gid="85" x="0" y="256" width="16" height="16"/>
+  <object id="7" gid="85" x="0" y="272" width="16" height="16"/>
+  <object id="8" gid="85" x="0" y="288" width="16" height="16"/>
+  <object id="9" gid="85" x="0" y="304" width="16" height="16"/>
+  <object id="10" gid="37" x="0" y="240" width="16" height="16"/>
+  <object id="11" gid="61" x="384" y="304" width="16" height="16"/>
+  <object id="12" gid="61" x="384" y="288" width="16" height="16"/>
+  <object id="13" gid="61" x="384" y="272" width="16" height="16"/>
+  <object id="14" gid="61" x="384" y="256" width="16" height="16"/>
+  <object id="15" gid="61" x="384" y="240" width="16" height="16"/>
+  <object id="16" gid="61" x="384" y="240" width="16" height="16"/>
+  <object id="17" gid="37" x="384" y="240" width="16" height="16"/>
+  <object id="23" gid="37" x="224" y="16" width="16" height="16"/>
+  <object id="24" gid="37" x="240" y="16" width="16" height="16"/>
+  <object id="25" gid="37" x="256" y="16" width="16" height="16"/>
+  <object id="26" gid="37" x="272" y="16" width="16" height="16"/>
+  <object id="27" gid="37" x="288" y="16" width="16" height="16"/>
+  <object id="28" gid="37" x="304" y="16" width="16" height="16"/>
+  <object id="29" gid="37" x="112" y="16" width="16" height="16"/>
+  <object id="31" gid="37" x="96" y="16" width="16" height="16"/>
+  <object id="32" gid="37" x="80" y="16" width="16" height="16"/>
+  <object id="33" gid="37" x="64" y="16" width="16" height="16"/>
+  <object id="34" gid="37" x="48" y="16" width="16" height="16"/>
+  <object id="35" gid="37" x="384" y="80" width="16" height="16"/>
+  <object id="36" gid="61" x="384" y="96" width="16" height="16"/>
+  <object id="37" gid="61" x="384" y="112" width="16" height="16"/>
+  <object id="38" gid="61" x="384" y="128" width="16" height="16"/>
+  <object id="39" gid="61" x="384" y="144" width="16" height="16"/>
+  <object id="40" gid="371" x="128" y="16" width="16" height="16"/>
+  <object id="41" gid="371" x="128" y="16" width="16" height="16"/>
+  <object id="42" gid="343" x="128" y="16" width="16" height="16"/>
+  <object id="43" gid="343" x="128" y="16" width="16" height="16"/>
+  <object id="44" gid="343" x="128" y="16" width="16" height="16"/>
  </objectgroup>
  <layer id="5" name="ladders" width="25" height="20">
   <data encoding="base64" compression="zlib">
-   eJxjYBgFo2AUDDcwfdSOUTtG7cAJ1tPBjoEAAOLcBWg=
+   eJxjYBgFo2AUDDcwedSOUTtG7cAJVtPBjoEAAIw8BUQ=
   </data>
  </layer>
  <layer id="7" name="exit" width="25" height="20">
   <data encoding="base64" compression="zlib">
-   eJxjYBgFxAJpRgYGGSCWZaSdHcZAs02A2JSGdngDzfYBYl8a2pEMNDsFiFNpaMcoGAWjYBSMAgQAAOJ7Aw0=
+   eJxjYBgFxAJxRgYGCSCWZKSdHfpAsw2A2JCGdrgDzfYAYk8a2hEPNDsBiBNpaMcoGAWjYBSMAgQAAMCMAt0=
   </data>
  </layer>
 </map>
