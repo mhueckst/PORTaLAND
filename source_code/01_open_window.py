@@ -1,23 +1,16 @@
 """
 Platformer Game
 """
-<<<<<<< HEAD
-
 import arcade
 import pathlib
-=======
-import arcade
->>>>>>> 0f2197176e605c978a6dd45b272471ff120d9821
 
 # Constants
 SCREEN_WIDTH = 1000
 SCREEN_HEIGHT = 650
 SCREEN_TITLE = "PORTaLAND"
 
-<<<<<<< HEAD
 ASSETS_PATH = pathlib.Path(__file__).resolve().parent.parent / "assets"
-=======
->>>>>>> 0f2197176e605c978a6dd45b272471ff120d9821
+
 
 class GameView(arcade.View):
     """
@@ -40,21 +33,13 @@ class GameView(arcade.View):
         self.texture.draw_sized(0, SCREEN_WIDTH - 1, 0, SCREEN_HEIGHT - 1)
 
 
-<<<<<<< HEAD
 class TitleView(arcade.View):
-=======
-class InstructionView(arcade.View):
->>>>>>> 0f2197176e605c978a6dd45b272471ff120d9821
 
     def __init__(self):
         super().__init__()
         arcade.set_background_color(arcade.color_from_hex_string("27a7d8"))
-<<<<<<< HEAD
         title_path = ASSETS_PATH/"images"/"portaland.png"
         self.texture = arcade.load_texture(title_path)
-=======
-        self.texture = arcade.load_texture("portaland.png")
->>>>>>> 0f2197176e605c978a6dd45b272471ff120d9821
 
     def on_show_view(self):
         """ This is run once when we switch to this view """
@@ -81,7 +66,6 @@ class InstructionView(arcade.View):
 
     def on_mouse_press(self, _x, _y, _button, _modifiers):
         """ If the user presses the mouse button, start the game. """
-<<<<<<< HEAD
         inst_view = InstructionView()
         self.window.show_view(inst_view)
 
@@ -157,22 +141,15 @@ class GameOverView(arcade.View):
     # def on_mouse_press(self, _x, _y, _button, _modifiers):
     #    game_view = GameView()
     #    self.window.show_view(game_view)
-=======
         game_view = GameView()
         game_view.setup()
         self.window.show_view(game_view)
-
->>>>>>> 0f2197176e605c978a6dd45b272471ff120d9821
 
 def main():
     """Main function"""
 
     window = arcade.Window(SCREEN_WIDTH, SCREEN_HEIGHT, SCREEN_TITLE)
-<<<<<<< HEAD
     start_view = TitleView()
-=======
-    start_view = InstructionView()
->>>>>>> 0f2197176e605c978a6dd45b272471ff120d9821
     window.show_view(start_view)
     # start_view.setup()
     # window.setup()
