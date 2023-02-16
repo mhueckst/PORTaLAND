@@ -1,37 +1,31 @@
 """
-Platformer Game
+Non-gameplay screen classes
 """
+import gameview
 import arcade
 import pathlib
 
 # Constants
-SCREEN_WIDTH = 1000
-SCREEN_HEIGHT = 650
+#SCREEN_WIDTH = 1000
+#SCREEN_HEIGHT = 650
+#SCREEN_TITLE = "PORTaLAND"
+
 SCREEN_TITLE = "PORTaLAND"
 
+TILE_SIZE = 32
+
+SCREEN_GRID_WIDTH = 25
+SCREEN_GRID_HEIGHT = 20
+
+SCREEN_WIDTH = TILE_SIZE * SCREEN_GRID_WIDTH
+SCREEN_HEIGHT = TILE_SIZE * SCREEN_GRID_HEIGHT
+
+TILE_SCALING = 2.0
+
+STARTING_X = TILE_SIZE * 7
+STARTING_Y = TILE_SIZE * 3
+
 ASSETS_PATH = pathlib.Path(__file__).resolve().parent.parent / "assets"
-
-
-class GameView(arcade.View):
-    """
-    Main application class.
-    """
-
-    def __init__(self):
-        # Call the parent class and set up the window
-        super().__init__()
-        self.window.set_mouse_visible(False)
-
-    def setup(self):
-        """Set up the game here. Call this function to restart the game."""
-        pass
-
-    def on_draw(self):
-        """Render the screen."""
-
-        self.clear()
-        self.texture.draw_sized(0, SCREEN_WIDTH - 1, 0, SCREEN_HEIGHT - 1)
-
 
 class TitleView(arcade.View):
 
@@ -102,9 +96,11 @@ class InstructionView(arcade.View):
 
     def on_mouse_press(self, _x, _y, _button, _modifiers):
         """ If the user presses the mouse button, start the game. """
-        game_over_view = GameOverView()
+        #game_over_view = GameOverView()
         #game_over_view.setup()
-        self.window.show_view(game_over_view)
+        game_view = gameview.GameView()
+        self.window.show_view(game_view)
+        game_view.setup()
 
 class GameOverView(arcade.View):
     def __init__(self):
@@ -137,24 +133,10 @@ class GameOverView(arcade.View):
     def on_mouse_leave(self, x: float, y: float):
         self.selected = False
 
-    # TODO: test functionality once GameView class is implemented
-    # def on_mouse_press(self, _x, _y, _button, _modifiers):
-    #    game_view = GameView()
-    #    self.window.show_view(game_view)
-        game_view = GameView()
-        game_view.setup()
+#TODO: add option to quit?
+    def on_mouse_press(self, _x, _y, _button, _modifiers):
+        game_view = gameview.GameView()
         self.window.show_view(game_view)
-
-def main():
-    """Main function"""
-
-    window = arcade.Window(SCREEN_WIDTH, SCREEN_HEIGHT, SCREEN_TITLE)
-    start_view = TitleView()
-    window.show_view(start_view)
-    # start_view.setup()
-    # window.setup()
-    arcade.run()
-
-
-if __name__ == "__main__":
-    main()
+        #game_view = GameView()
+        game_view.setup()
+        #self.window.show_view(game_view)
