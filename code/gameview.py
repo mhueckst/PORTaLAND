@@ -3,7 +3,7 @@ Gameview Class
 
 written by the Firm (trying out creepy anonymous corporation names)
 """
-
+import new_screens
 import arcade
 import pathlib
 from typing import Optional
@@ -114,12 +114,12 @@ class GameView(arcade.View):
                                             collision_type="ground", body_type=arcade.PymunkPhysicsEngine.STATIC)
 
 
-    ''' 
+     
     def on_mouse_press(self, x, y, button, modifiers):
         # for testing screen switching functionality before adding gameplay elements
-        game_over = GameOverView()
-        window.show_view(game_over)
-    '''
+        game_over = new_screens.GameOverView()
+        self.window.show_view(game_over)
+    
 
     def on_key_press(self, key, modifiers):
         pass
@@ -127,6 +127,7 @@ class GameView(arcade.View):
 
     def on_update(self, delta: float) -> None:
         self.physics_engine.step()
+        pass
 
     def on_draw(self):
         self.clear()
@@ -138,13 +139,3 @@ class GameView(arcade.View):
         self.ladders.draw()
         self.exit.draw()
         self.player.draw()
-
-
-if __name__ == "__main__":
-
-    window = arcade.Window(SCREEN_WIDTH, SCREEN_HEIGHT, SCREEN_TITLE)
-    start_view = GameView()
-    window.show_view(start_view)
-    start_view.setup()
-    arcade.run()
-
