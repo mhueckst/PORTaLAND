@@ -5,42 +5,11 @@ written by the Firm (trying out creepy anonymous corporation names)
 """
 import new_screens
 import arcade
-import pathlib
+import visualConstants as vc
+import physicsConstants as pc
+from paths import ASSETS_PATH
 from typing import Optional
 
-# visual constants
-SCREEN_TITLE = "PORTaLAND"
-
-TILE_SIZE = 32
-
-SCREEN_GRID_WIDTH = 25
-SCREEN_GRID_HEIGHT = 20
-
-SCREEN_WIDTH = TILE_SIZE * SCREEN_GRID_WIDTH
-SCREEN_HEIGHT = TILE_SIZE * SCREEN_GRID_HEIGHT
-
-TILE_SCALING = 2.0
-
-STARTING_X = TILE_SIZE * 7
-STARTING_Y = TILE_SIZE * 3
-
-# physics constants
-
-GRAVITY = 1500
-
-DEF_DAMPING = 1.0
-PLAYER_DAMPING = 0.4
-
-PLAYER_FRICTION = 1.0
-GROUND_FRICTION = 0.7
-
-PLAYER_MASS = 2.0
-
-PLAYER_MAX_SPEED_HORIZ = 450
-PLAYER_MAX_SPEED_VERT = 1600
-
-
-ASSETS_PATH = pathlib.Path(__file__).resolve().parent.parent / "assets"
 
 class GameView(arcade.View):
 
@@ -74,7 +43,7 @@ class GameView(arcade.View):
         background_layer2 = "background2"
         ladders_layer = "ladders"
 
-        tile_map = arcade.load_tilemap(str(map_path),TILE_SCALING)
+        tile_map = arcade.load_tilemap(str(map_path), vc.TILE_SCALING)
 
         self.scene = arcade.Scene.from_tilemap(tile_map)
 
@@ -85,45 +54,52 @@ class GameView(arcade.View):
         self.ladders = tile_map.sprite_lists["ladders"]
         self.exit = tile_map.sprite_lists["exit"]
         self.portal_walls = tile_map.sprite_lists["portal walls"]
-                
 
         background_color = arcade.color.FRESH_AIR
         arcade.set_background_color(background_color)
 
         self.player = arcade.SpriteList()
 
-        self.player_sprite = arcade.Sprite(ASSETS_PATH / "images" / "SPRITES" / "player" / "idle" / "idle-1.png", TILE_SCALING)
+        self.player_sprite = arcade.Sprite(
+            ASSETS_PATH /
+            "images" /
+            "SPRITES" /
+            "player" /
+            "idle" /
+            "idle-1.png",
+            vc.TILE_SCALING)
 
-        self.player_sprite.center_x = STARTING_X
-        self.player_sprite.center_y = STARTING_Y
+        self.player_sprite.center_x = vc.STARTING_X
+        self.player_sprite.center_y = vc.STARTING_Y
 
         self.player.append(self.player_sprite)
 
-        damping = DEF_DAMPING
-        gravity = (0, -GRAVITY)
+        damping = pc.DEF_DAMPING
+        gravity = (0, -(pc.GRAVITY))
 
+        self.physics_engine = arcade.PymunkPhysicsEngine(
+            damping=damping, gravity=gravity)
 
-        self.physics_engine = arcade.PymunkPhysicsEngine(damping=damping,gravity=gravity)
+        self.physics_engine.add_sprite(self.player_sprite,
+                                       friction=pc.PLAYER_FRICTION,
+                                       mass=pc.PLAYER_MASS,
+                                       moment=arcade.PymunkPhysicsEngine.MOMENT_INF,
+                                       collision_type="player",
+                                       max_horizontal_velocity=pc.PLAYER_MAX_SPEED_HORIZ,
+                                       max_vertical_velocity=pc.PLAYER_MAX_SPEED_VERT)
 
-        self.physics_engine.add_sprite(self.player_sprite, friction=PLAYER_FRICTION,
-                                       mass=PLAYER_MASS, moment=arcade.PymunkPhysicsEngine.MOMENT_INF,
-                                       collision_type="player", max_horizontal_velocity=PLAYER_MAX_SPEED_HORIZ,
-                                       max_vertical_velocity=PLAYER_MAX_SPEED_VERT)
-        
-        self.physics_engine.add_sprite_list(self.ground, friction = GROUND_FRICTION,
-                                            collision_type="ground", body_type=arcade.PymunkPhysicsEngine.STATIC)
+        self.physics_engine.add_sprite_list(self.ground,
+                                            friction=pc.GROUND_FRICTION,
+                                            collision_type="ground",
+                                            body_type=arcade.PymunkPhysicsEngine.STATIC)
 
-
-     
     def on_mouse_press(self, x, y, button, modifiers):
         # for testing screen switching functionality before adding gameplay elements
         game_over = new_screens.GameOverView()
         self.window.show_view(game_over)
-    
 
     def on_key_press(self, key, modifiers):
         pass
-
 
     def on_update(self, delta: float) -> None:
         self.physics_engine.step()
