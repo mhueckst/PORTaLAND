@@ -42,8 +42,8 @@ class GameView(arcade.View):
 
         self.level = 1
 
-        self.a_pressed: bool = False
-        self.d_pressed: bool = False
+        self.A_pressed: bool = False
+        self.D_pressed: bool = False
 
     def setup(self):
 
@@ -114,30 +114,43 @@ class GameView(arcade.View):
 
     def on_key_press(self, key, modifiers):
         if key == arcade.key.A:
-            self.a_pressed = True
+            self.A_pressed = True
         elif key == arcade.key.D:
-            self.d_pressed = True
+            self.D_pressed = True
+        elif key == arcade.key.W:
+            if self.physics_engine.is_on_ground(self.player_sprite):
+                strength = (0, pc.PLAYER_JUMP_STRENGTH)
+                self.physics_engine.apply_impulse(self.player_sprite, strength)
 
     def on_key_release(self, key, modifiers):
         if key == arcade.key.A:
-            self.a_pressed = False
+            self.A_pressed = False
         elif key == arcade.key.D:
-            self.d_pressed = False
+            self.D_pressed = False
 
     def on_update(self, delta: float) -> None:
-        self.physics_engine.step()
+        is_on_ground = self.physics_engine.is_on_ground(self.player_sprite)
 
         # Update player force based on keys pressed
-        if self.a_pressed and not self.d_pressed:
-            force = (-(pc.PLAYER_MOVE_FORCE_ON_GROUND), 0)
+        if self.A_pressed and not self.D_pressed:
+            if is_on_ground:
+                force = (-(pc.PLAYER_MOVE_FORCE_ON_GROUND), 0)
+            else:
+                force = (-(pc.PLAYER_MOVE_FORCE_IN_AIR), 0)
             self.physics_engine.apply_force(self.player_sprite, force)
             self.physics_engine.set_friction(self.player_sprite, 0)
-        elif self.d_pressed and not self.a_pressed:
-            force = (pc.PLAYER_MOVE_FORCE_ON_GROUND, 0)
+        elif self.D_pressed and not self.A_pressed:
+            if is_on_ground:
+                force = (pc.PLAYER_MOVE_FORCE_ON_GROUND, 0)
+            else:
+                force = (pc.PLAYER_MOVE_FORCE_IN_AIR, 0)
             self.physics_engine.apply_force(self.player_sprite, force)
             self.physics_engine.set_friction(self.player_sprite, 0)
         else:
             self.physics_engine.set_friction(self.player_sprite, 1.0)
+
+        # Update movement in physics engine
+        self.physics_engine.step()
 
     def on_draw(self):
         self.clear()
