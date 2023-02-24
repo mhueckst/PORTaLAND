@@ -7,6 +7,7 @@ import arcade
 import player
 import visualConstants as vc
 import physicsConstants as pc
+import new_screens
 from paths import ASSETS_PATH
 from typing import Optional
 
@@ -109,6 +110,12 @@ class GameView(arcade.View):
                                             collision_type="ground",
                                             body_type=arcade.PymunkPhysicsEngine.STATIC)
 
+        # Add exit to physics engine
+        self.physics_engine.add_sprite_list(self.exit,
+                                            friction=pc.GROUND_FRICTION,
+                                            collision_type="exit",
+                                            body_type=arcade.PymunkPhysicsEngine.STATIC)
+
         # Add portal wall sprite to physics engine
         # NOTE: We may need to adjust the following line, as it currently
         #       prevents the player from going through a portal_wall/off
@@ -152,6 +159,7 @@ class GameView(arcade.View):
             self.S_pressed = False
 
     def on_update(self, delta: float):
+
         is_on_ground = self.physics_engine.is_on_ground(self.player_sprite)
 
         # Update player movement based on keys pressed
@@ -170,10 +178,13 @@ class GameView(arcade.View):
             self.set_player_friction(1.0)
 
         # Update movement in physics engine
-        self.physics_engine.step()
+        self.physics_engine.step(delta)
 
         # Update sprites to stay in screen bounds
         self.keep_sprites_within_bounds()
+
+        # Check if player encountered exit tile
+        self.check_exit_tile_collision()
 
     def apply_player_movement(self, key, is_on_ground, friction):
         force = self.get_force(key, is_on_ground)
@@ -217,6 +228,11 @@ class GameView(arcade.View):
                 sprite.top = vc.SCREEN_HEIGHT
             elif sprite.bottom < 32:
                 sprite.bottom = 32
+
+    def check_exit_tile_collision(self):
+        if arcade.check_for_collision_with_list(self.player_sprite, self.exit):
+            gameover_view = new_screens.GameOverView()
+            self.window.show_view(gameover_view)
 
     def on_draw(self):
         self.clear()
