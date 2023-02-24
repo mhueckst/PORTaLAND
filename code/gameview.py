@@ -4,23 +4,11 @@ Gameview Class
 written by the Firm (trying out creepy anonymous corporation names)
 """
 import arcade
+import player
 import visualConstants as vc
 import physicsConstants as pc
 from paths import ASSETS_PATH
 from typing import Optional
-
-
-class Player(arcade.Sprite):
-    def update(self):
-        if self.left < 0:
-            self.left = 0
-        elif self.right > vc.SCREEN_WIDTH - 1:
-            self.right = vc.SCREEN_WIDTH - 1
-
-        if self.bottom < 0:
-            self.bottom = 0
-        elif self.top > vc.SCREEN_WIDTH - 1:
-            self.top = vc.SCREEN_HEIGHT - 1
 
 
 class GameView(arcade.View):
@@ -45,6 +33,10 @@ class GameView(arcade.View):
         self.A_pressed: bool = False
         self.D_pressed: bool = False
 
+        # Set default background color
+        background_color = arcade.color.FRESH_AIR
+        arcade.set_background_color(background_color)
+
     def setup(self):
 
         # Map name
@@ -65,22 +57,11 @@ class GameView(arcade.View):
         self.exit = tile_map.sprite_lists["exit"]
         self.portal_walls = tile_map.sprite_lists["portal walls"]
 
-        # Set default background color
-        background_color = arcade.color.FRESH_AIR
-        arcade.set_background_color(background_color)
-
         # Create sprite list
         self.player_list = arcade.SpriteList()
 
         # Create player sprite
-        self.player_sprite = arcade.Sprite(
-            ASSETS_PATH /
-            "images" /
-            "SPRITES" /
-            "player" /
-            "idle" /
-            "idle-1.png",
-            vc.PLAYER_SCALING)
+        self.player_sprite = player.Player()
 
         # Set player starting location
         self.player_sprite.center_x = vc.STARTING_X
@@ -128,7 +109,7 @@ class GameView(arcade.View):
         elif key == arcade.key.D:
             self.D_pressed = False
 
-    def on_update(self, delta: float) -> None:
+    def on_update(self, delta: float):
         is_on_ground = self.physics_engine.is_on_ground(self.player_sprite)
 
         # Update player force based on keys pressed

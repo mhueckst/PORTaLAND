@@ -77,11 +77,9 @@ class InstructionView(arcade.View):
 
     def on_mouse_press(self, _x, _y, _button, _modifiers):
         """ If the user presses the mouse button, start the game. """
-        # game_over_view = GameOverView()
-        # game_over_view.setup()
         game_view = gameview.GameView()
-        self.window.show_view(game_view)
         game_view.setup()
+        self.window.show_view(game_view)
 
 
 class GameOverView(arcade.View):
