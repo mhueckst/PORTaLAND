@@ -19,3 +19,5 @@ PLAYER_PATH = ASSETS_PATH/"images"/"SPRITES"/"player"
 IDLE_PATH = PLAYER_PATH/"idle"
 
 RUN_SHOOT_PATH = PLAYER_PATH/"run-shoot"
+
+JUMP_PATH = PLAYER_PATH/"jump"

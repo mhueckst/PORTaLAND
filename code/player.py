@@ -34,6 +34,13 @@ class Player(arcade.Sprite):
                 f"{path.RUN_SHOOT_PATH}/run-shoot-{i}.png")
             self.run_textures.append(texture)
 
+        # Load in jumping textures
+        self.jump_textures = []
+        for i in range(1, 5):
+            texture = arcade.load_texture_pair(
+                f"{path.JUMP_PATH}/jump-{i}.png")
+            self.jump_textures.append(texture)
+
         # Set starting texture
         self.texture = arcade.load_texture_pair(
             f"{path.IDLE_PATH}/idle-1.png")[0]
@@ -47,8 +54,14 @@ class Player(arcade.Sprite):
         # Horizontal distance traveled since changing texture
         self.x_odometer = 0
 
+        # Vertical distance traveled since changing texture
+        self.y_odometer = 0
+
         # Timer for idle animation
         self.idle_timer = 0
+
+        # Timer for jump animation
+        self.jump_timer = 0
 
     def pymunk_moved(self, physics_engine, dx, dy, d_angle):
         # Determing left or right facing
@@ -57,13 +70,26 @@ class Player(arcade.Sprite):
         elif dx > DEAD_ZONE and self.character_face_direction == LEFT_FACING:
             self.character_face_direction = RIGHT_FACING
 
+        is_on_ground = physics_engine.is_on_ground(self)
+
+        # Jumping animation
+        if not is_on_ground:
+            self.jump_timer += 1
+            if self.jump_timer % 7 == 0:
+                self.cur_texture += 1
+                print(f"current texture: {self.cur_texture}")
+
+                if self.cur_texture >= len(self.jump_textures):
+                    self.cur_texture = 0
+                self.texture = self.jump_textures[self.cur_texture][self.character_face_direction]
+
         self.x_odometer += dx
 
         if abs(dx) <= DEAD_ZONE:
             self.idle_timer += 1
 
             # Change texture every 10 frames when idle
-            if self.idle_timer % 10 == 0:
+            if self.idle_timer % 20 == 0:
                 self.cur_texture += 1
                 if self.cur_texture >= len(self.idle_textures):
                     self.cur_texture = 0
