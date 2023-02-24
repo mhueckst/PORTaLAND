@@ -48,7 +48,7 @@ class GameView(arcade.View):
         # Load in TileMap
         tile_map = arcade.load_tilemap(str(map_path), vc.TILE_SCALING)
 
-        # self.scene = arcade.Scene.from_tilemap(tile_map)
+        self.scene = arcade.Scene.from_tilemap(tile_map)
 
         # Pull sprite layers out of tile map
         self.background = tile_map.sprite_lists["background"]
@@ -93,6 +93,15 @@ class GameView(arcade.View):
         self.physics_engine.add_sprite_list(self.ground,
                                             friction=pc.GROUND_FRICTION,
                                             collision_type="ground",
+                                            body_type=arcade.PymunkPhysicsEngine.STATIC)
+
+        # Add portal wall sprite to physics engine
+        # NOTE: We may need to adjust the following line, as it currently
+        #       prevents the player from going through a portal_wall/off
+        #       the screen where a portal wall is located.
+        self.physics_engine.add_sprite_list(self.portal_walls,
+                                            friction=pc.WALL_FRICTION,
+                                            collision_type="wall",
                                             body_type=arcade.PymunkPhysicsEngine.STATIC)
 
     def on_key_press(self, key, modifiers):
@@ -158,6 +167,18 @@ class GameView(arcade.View):
 
         # Update movement in physics engine
         self.physics_engine.step()
+        self.keep_sprites_within_bounds()
+
+    def keep_sprites_within_bounds(self):
+        for sprite in self.player_list:
+            if sprite.right > vc.SCREEN_WIDTH:
+                sprite.right = vc.SCREEN_WIDTH - 24
+            elif sprite.left < 0:
+                sprite.left = 24
+            if sprite.top > vc.SCREEN_HEIGHT:
+                sprite.top = vc.SCREEN_HEIGHT
+            elif sprite.bottom < 32:
+                sprite.bottom = 32
 
     def on_draw(self):
         self.clear()
