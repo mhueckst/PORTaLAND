@@ -27,6 +27,13 @@ class Player(arcade.Sprite):
                 f"{path.IDLE_PATH}/idle-{i}.png")
             self.idle_textures.append(texture)
 
+        # Load in running textures
+        self.run_textures = []
+        for i in range(1, 9):
+            texture = arcade.load_texture_pair(
+                f"{path.RUN_SHOOT_PATH}/run-shoot-{i}.png")
+            self.run_textures.append(texture)
+
         # Set starting texture
         self.texture = arcade.load_texture_pair(
             f"{path.IDLE_PATH}/idle-1.png")[0]
@@ -58,8 +65,16 @@ class Player(arcade.Sprite):
             # Change texture every 10 frames when idle
             if self.idle_timer % 10 == 0:
                 self.cur_texture += 1
-                if self.cur_texture > 3:
+                if self.cur_texture >= len(self.idle_textures):
                     self.cur_texture = 0
-            self.texture = self.idle_textures[self.cur_texture][self.character_face_direction]
+                self.texture = self.idle_textures[self.cur_texture][self.character_face_direction]
         else:
             self.idle_timer = 0
+
+            self.x_odometer += dx
+            if abs(self.x_odometer) >= DISTANCE_TO_CHANGE_TEXTURE:
+                self.x_odometer %= DISTANCE_TO_CHANGE_TEXTURE
+                self.cur_texture += 1
+                if self.cur_texture >= len(self.run_textures):
+                    self.cur_texture = 0
+                self.texture = self.run_textures[self.cur_texture][self.character_face_direction]

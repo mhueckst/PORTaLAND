@@ -17,3 +17,5 @@ TITLE_PATH = ASSETS_PATH/"images"/"portaland.png"
 PLAYER_PATH = ASSETS_PATH/"images"/"SPRITES"/"player"
 
 IDLE_PATH = PLAYER_PATH/"idle"
+
+RUN_SHOOT_PATH = PLAYER_PATH/"run-shoot"
