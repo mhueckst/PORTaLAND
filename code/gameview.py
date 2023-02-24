@@ -32,6 +32,8 @@ class GameView(arcade.View):
 
         self.A_pressed: bool = False
         self.D_pressed: bool = False
+        self.W_pressed: bool = False
+        self.S_pressed: bool = False
 
         # Set default background color
         background_color = arcade.color.FRESH_AIR
@@ -61,7 +63,7 @@ class GameView(arcade.View):
         self.player_list = arcade.SpriteList()
 
         # Create player sprite
-        self.player_sprite = player.Player()
+        self.player_sprite = player.Player(self.ladders)
 
         # Set player starting location
         self.player_sprite.center_x = vc.STARTING_X
@@ -99,34 +101,58 @@ class GameView(arcade.View):
         elif key == arcade.key.D:
             self.D_pressed = True
         elif key == arcade.key.W:
-            if self.physics_engine.is_on_ground(self.player_sprite):
+            self.W_pressed = True
+            if self.physics_engine.is_on_ground(self.player_sprite) \
+                    and not self.player_sprite.is_on_ladder:
                 strength = (0, pc.PLAYER_JUMP_STRENGTH)
                 self.physics_engine.apply_impulse(self.player_sprite, strength)
+        elif key == arcade.key.S:
+            self.S_pressed = True
+            if self.player_sprite.is_on_ladder:
+                self.player_sprite.change_y = -(pc.PLAYER_MAX_SPEED_VERT)
+                self.physics_engine.set_velocity(
+                    self.player_sprite, (self.player_sprite.change_x, self.player_sprite.change_y))
 
     def on_key_release(self, key, modifiers):
         if key == arcade.key.A:
             self.A_pressed = False
         elif key == arcade.key.D:
             self.D_pressed = False
+        elif key == arcade.key.W:
+            self.W_pressed = False
+        elif key == arcade.key.S:
+            if self.player_sprite.is_on_ladder:
+                self.player_sprite.change_y = 0
+            self.S_pressed = False
 
     def on_update(self, delta: float):
         is_on_ground = self.physics_engine.is_on_ground(self.player_sprite)
 
         # Update player force based on keys pressed
         if self.A_pressed and not self.D_pressed:
-            if is_on_ground:
+            if is_on_ground or self.player_sprite.is_on_ladder:
                 force = (-(pc.PLAYER_MOVE_FORCE_ON_GROUND), 0)
             else:
                 force = (-(pc.PLAYER_MOVE_FORCE_IN_AIR), 0)
             self.physics_engine.apply_force(self.player_sprite, force)
             self.physics_engine.set_friction(self.player_sprite, 0)
         elif self.D_pressed and not self.A_pressed:
-            if is_on_ground:
+            if is_on_ground or self.player_sprite.is_on_ladder:
                 force = (pc.PLAYER_MOVE_FORCE_ON_GROUND, 0)
             else:
                 force = (pc.PLAYER_MOVE_FORCE_IN_AIR, 0)
             self.physics_engine.apply_force(self.player_sprite, force)
             self.physics_engine.set_friction(self.player_sprite, 0)
+        elif self.W_pressed and not self.S_pressed:
+            if self.player_sprite.is_on_ladder:
+                force = (0, pc.PLAYER_MOVE_FORCE_ON_GROUND)
+                self.physics_engine.apply_force(self.player_sprite, force)
+                self.physics_engine.set_friction(self.player_sprite, 0)
+        elif self.S_pressed and not self.W_pressed:
+            if self.player_sprite.is_on_ladder:
+                force = (0, -(pc.PLAYER_MOVE_FORCE_ON_GROUND))
+                self.physics_engine.set_friction(self.player_sprite, 0)
+
         else:
             self.physics_engine.set_friction(self.player_sprite, 1.0)
 
