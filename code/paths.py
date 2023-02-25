@@ -13,3 +13,13 @@ INSTRUCTIONS_PATH = ASSETS_PATH/"images"/"instructions.png"
 LYING_CAKE_PATH = ASSETS_PATH/"images"/"theCakeIsALie.png"
 
 TITLE_PATH = ASSETS_PATH/"images"/"portaland.png"
+
+PLAYER_PATH = ASSETS_PATH/"images"/"SPRITES"/"player"
+
+IDLE_PATH = PLAYER_PATH/"idle"
+
+RUN_SHOOT_PATH = PLAYER_PATH/"run-shoot"
+
+JUMP_PATH = PLAYER_PATH/"jump"
+
+CLIMB_PATH = PLAYER_PATH/"climb"
