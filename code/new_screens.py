@@ -3,7 +3,7 @@ Non-gameplay screen classes
 """
 import gameview
 import arcade
-import visualConstants as vc
+import visual_constants as vc
 import paths as path
 
 
@@ -17,9 +17,6 @@ class TitleView(arcade.View):
     def on_show_view(self):
         """ This is run once when we switch to this view """
         arcade.set_background_color(arcade.color_from_hex_string("27a7d8"))
-
-        # Reset the viewport, necessary if we have a scrolling game and we need
-        # to reset the viewport back to the start so we can see what we draw.
         arcade.set_viewport(0, self.window.width, 0, self.window.height)
 
     def on_draw(self):
@@ -27,16 +24,6 @@ class TitleView(arcade.View):
         self.clear()
         self.texture.draw_scaled(
             self.window.width / 2, self.window.height / 2, 1)
-
-        # commented out code for reference of how to add text or position things
-        # def draw_scaled(self, center_x: float, center_y: float,
-        #                 scale: float = 1.0,
-        #                 angle: float = 0,
-        #                 alpha: int = 255):
-        # arcade.draw_text("Instructions Screen", self.window.width / 2, self.window.height / 2,
-        #                  arcade.color.WHITE, font_size=50, anchor_x="center")
-        # arcade.draw_text("Click to advance", self.window.width / 2, self.window.height / 2-75,
-        #                  arcade.color.WHITE, font_size=20, anchor_x="center")
 
     def on_mouse_press(self, _x, _y, _button, _modifiers):
         """ If the user presses the mouse button, start the game. """
@@ -86,7 +73,7 @@ class GameOverView(arcade.View):
     def __init__(self):
         super().__init__()
         self.selected: bool = False
-        self.gameover_image = arcade.load_texture(path.GAMEOVER_IMAGE_PATH)
+        self.game_over_image = arcade.load_texture(path.GAMEOVER_IMAGE_PATH)
         self.lying_cake_image = arcade.load_texture(path.LYING_CAKE_PATH)
 
     def on_draw(self) -> None:
@@ -94,7 +81,7 @@ class GameOverView(arcade.View):
         if self.selected:
             self.draw_image(self.lying_cake_image)
         else:
-            self.draw_image(self.gameover_image)
+            self.draw_image(self.game_over_image)
 
     def draw_image(self, screen_image: str):
         arcade.draw_texture_rectangle(
@@ -112,6 +99,6 @@ class GameOverView(arcade.View):
         self.selected = False
 
 # TODO: add option to quit?
-    def on_mouse_press(self, _x, _y, _button, _modifiers):
-        title_view = TitleView()
-        self.window.show_view(title_view)
+#     def on_mouse_press(self, _x, _y, _button, _modifiers):
+#         title_view = TitleView()
+#         self.window.show_view(title_view)

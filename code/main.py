@@ -4,7 +4,7 @@ driver file
 
 import new_screens
 import arcade
-import visualConstants as vc
+import visual_constants as vc
 
 
 def main():
