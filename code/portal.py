@@ -2,8 +2,8 @@
 Portal class, initializes portal animation
 """
 import arcade
-import visualConstants as vc
-import physicsConstants as pc
+import visual_constants as vc
+import physics_constants as pc
 import paths as path
 
 class Portal(arcade.Sprite):
