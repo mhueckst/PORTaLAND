@@ -226,6 +226,7 @@ class GameView(arcade.View):
         # Check if player encountered exit tile
         self.check_exit_tile_collision()
 
+        self.player_portal_collision_handler()
         self.bullet_list.update()
         # self.blue_portal_list.update()
         # self.orange_portal_list.update()
@@ -317,6 +318,83 @@ class GameView(arcade.View):
         if arcade.check_for_collision_with_list(self.player_sprite, self.exit):
             game_over_view = new_screens.GameOverView()
             self.window.show_view(game_over_view)
+
+
+    def player_portal_collision_handler(self):
+        collision_portal_list = arcade.check_for_collision_with_list(self.player_sprite, self.portal_walls) #CHANGE BACK TO PORTAL SPRITES
+        exit_portal = None
+        if len(collision_portal_list) == 0:
+            return
+        entry_portal = collision_portal_list[0]
+        ct = 0
+        for p in self.portal_walls:  #CHANGE BACK TO PORTAL SPRITES
+            if p is not entry_portal:
+                exit_portal = p
+                #break
+            ct += 1
+            if ct > 2:
+                break
+
+        if exit_portal is None:
+           return
+
+        exit_port_left = exit_portal.left
+        exit_port_right = exit_portal.right
+        entry_port_left = entry_portal.left
+        entry_port_right = entry_portal.right
+
+        (x_exit_port, y_exit_port) = exit_portal.position
+        y_bottom_exit_port = exit_portal.bottom
+        self.player_sprite.set_position(x_exit_port, y_exit_port)
+        self.player_sprite.bottom = y_bottom_exit_port
+        #self.player_sprite.bottom = y_bottom_exit_port
+
+        (x_entry_port, y_entry_port) = entry_portal.position
+
+        velocity_update = [pc.PLAYER_MAX_SPEED_HORIZ, pc.PLAYER_MAX_SPEED_VERT]
+        [vel_x, vel_y] = velocity_update
+
+
+            #check where collision is, apply dx, dy accordingly
+            #new fxn?
+
+        exit_width_check = abs(exit_port_right - exit_port_left)
+        entry_width_check = abs(entry_port_right - entry_port_left)
+
+        if entry_width_check <= vc.TILE_SIZE*2:
+            if exit_width_check <= vc.TILE_SIZE*2:
+                opposing_wall_check = abs(entry_port_right - exit_port_right)
+                if opposing_wall_check > 0:
+                    velocity_update[0] = -vel_x
+            elif y_exit_port <= vc.TILE_SIZE*2:
+                if x_entry_port >= (vc.SCREEN_WIDTH - vc.TILE_SIZE*5):
+                    velocity_update = [vel_y, -vel_x]
+                else:
+                    velocity_update = [vel_y, vel_x]
+            else:
+                if x_entry_port >= (vc.SCREEN_WIDTH - vc.TILE_SIZE*5):
+                    velocity_update = [vel_y, vel_x]
+                else:
+                    velocity_update = [vel_y, -vel_x]
+        else:
+            if exit_width_check <= vc.TILE_SIZE*2:
+                if x_exit_port >= (vc.SCREEN_WIDTH - vc.TILE_SIZE*5):
+                    velocity_update = [vel_y, vel_x]
+                else:
+                    velocity_update = [vel_y, -vel_x]
+            elif y_exit_port <= vc.TILE_SIZE*2:
+                velocity_update[1] = -vel_y
+
+        self.player_sprite.velocity = velocity_update
+        self.player_sprite.pymunk.gravity = (0, -pc.GRAVITY)
+        self.player_sprite.pymunk.damping = pc.PLAYER_DAMPING
+
+
+
+
+
+
+
 
 
     def on_draw(self):

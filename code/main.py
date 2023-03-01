@@ -1,7 +1,6 @@
 """
 driver file
 """
-
 import new_screens
 import arcade
 import visual_constants as vc
@@ -13,7 +12,6 @@ def main():
     window.show_view(start_view)
     # start_view.setup()
     arcade.run()
-
 
 if __name__ == "__main__":
     main()
