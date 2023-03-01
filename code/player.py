@@ -3,13 +3,13 @@ Player class
 """
 
 import arcade
-import visualConstants as vc
-import physicsConstants as pc
+import visual_constants as vc
+import physics_constants as pc
 import paths as path
 
 # Player movement constants
 
-# Value to to indicate when to change back to idle animation
+# Value to indicate when to change back to idle animation
 DEAD_ZONE = 0.1
 
 RIGHT_FACING = 0

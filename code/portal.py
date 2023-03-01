@@ -1,31 +1,28 @@
 """
-Portal class
+Portal class, initializes portal animation
 """
-
 import arcade
 import visualConstants as vc
 import physicsConstants as pc
 import paths as path
 
-# Portal constants
-
-DEAD_ZONE = 0.1
-
 class Portal(arcade.Sprite):
-    def __init__(self: arcade.SpriteList):
+    """ This class creates a portal animation """
+
+    def __init__(self, texture_list):
         super().__init__()
 
-        self.scale = vc.PORTAL_SCALING
+        # Start at the first frame
+        self.current_texture = 0
+        self.textures = texture_list
 
-        self.load_portal_textures()
+    def update(self):
 
-        # Set starting texture
-        # TODO set starting texture depending on which portal already exists
-
-        self.texture = arcade.load_texture_pair(
-            f"{path.PORTAL_PATH}/blue_portal-1.png")[0]
-
-        self.idle_timer = 0
+        self.current_texture += 1
+        if self.current_texture < len(self.textures):
+            self.set_texture(self.current_texture)
+        else:
+            self.remove_from_sprite_lists()
 
     def load_portal_textures(self):
         self.active_textures = []
@@ -34,9 +31,3 @@ class Portal(arcade.Sprite):
                 f"{path.PORTAL_PATH}/blue_portal-{i}.png")
             self.portal_textures.append(texture)
 
-    def portal_animation(self, dx):
-        if abs(dx) <= DEAD_ZONE:
-            self.idle_timer += 1
-            # Change texture every 10 frames
-            if self.idle_timer % 10 == 0:
-                self.cur_animation_texture += 1
