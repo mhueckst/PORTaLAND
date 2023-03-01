@@ -2,7 +2,9 @@
 Portal class, initializes portal animation
 """
 import arcade
-
+import visualConstants as vc
+import physicsConstants as pc
+import paths as path
 
 class Portal(arcade.Sprite):
     """ This class creates a portal animation """
@@ -21,3 +23,11 @@ class Portal(arcade.Sprite):
             self.set_texture(self.current_texture)
         else:
             self.remove_from_sprite_lists()
+
+    def load_portal_textures(self):
+        self.active_textures = []
+        for i in range(1, 5):
+            texture = arcade.load_texture_pair(
+                f"{path.PORTAL_PATH}/blue_portal-{i}.png")
+            self.portal_textures.append(texture)
+
