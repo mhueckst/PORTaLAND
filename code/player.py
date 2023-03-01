@@ -146,3 +146,6 @@ class Player(arcade.Sprite):
                 if self.cur_animation_texture >= len(self.run_textures):
                     self.cur_animation_texture = 0
                 self.texture = self.run_textures[self.cur_animation_texture][self.player_face_direction]
+
+    #def player_portal_collision_handler(self, dx, dy, physics_engine):
+     #   if 
