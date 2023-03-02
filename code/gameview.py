@@ -233,14 +233,16 @@ class GameView(arcade.View):
         self.explosions_list.update()
 
         for bullet in self.bullet_list:
-            hit_list = arcade.check_for_collision_with_list(bullet, self.portal_walls)
+            portal_wall_hit = arcade.check_for_collision_with_list(bullet, self.portal_walls)
+            normal_wall_hit = arcade.check_for_collision_with_list(bullet, self.ground)
 
-            if len(hit_list) > 0:
+            # Handle hitting portal walls
+            if len(portal_wall_hit) > 0:
                 explosion = portal.Portal(self.explosion_texture_list)
 
                 # Move it to the location of the coin
-                explosion.center_x = hit_list[0].center_x
-                explosion.center_y = hit_list[0].center_y
+                explosion.center_x = portal_wall_hit[0].center_x
+                explosion.center_y = portal_wall_hit[0].center_y
 
                 # Call update() because it sets which image we start on
                 explosion.update()
@@ -261,8 +263,12 @@ class GameView(arcade.View):
                 #     orange_portal.update()
                 #     self.orange_portal_list.append(orange_portal)
                 #
-                # bullet.remove_from_sprite_lists()
+                bullet.remove_from_sprite_lists()
                 arcade.play_sound(self.hit_sound)
+
+            if len(normal_wall_hit) > 0:
+                arcade.play_sound(self.hit_sound)
+                bullet.remove_from_sprite_lists()
 
             if bullet.bottom > vc.SCREEN_WIDTH or bullet.top < 0 or bullet.right < 0 or bullet.left > vc.SCREEN_WIDTH:
                 bullet.remove_from_sprite_lists()
