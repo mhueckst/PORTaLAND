@@ -83,6 +83,15 @@ class GameOverView(arcade.View):
         self.selected: bool = False
         self.game_over_image = arcade.load_texture(path.GAMEOVER_IMAGE_PATH)
         self.lying_cake_image = arcade.load_texture(path.LYING_CAKE_PATH)
+        self.background_music = arcade.load_sound(path.NEW_SCREENS_MUSIC_PATH)
+
+    def on_show_view(self):
+        arcade.set_background_color(arcade.color_from_hex_string("000000"))
+        arcade.set_viewport(0, self.window.width, 0, self.window.height)
+        self.music_player = self.background_music.play(MUSIC_VOLUME, loop=True)
+
+    def on_hide_view(self):
+        self.music_player.pause()
 
     def on_draw(self) -> None:
         arcade.start_render()
@@ -106,7 +115,6 @@ class GameOverView(arcade.View):
     def on_mouse_leave(self, x: float, y: float):
         self.selected = False
 
-# TODO: add option to quit?
-#     def on_mouse_press(self, _x, _y, _button, _modifiers):
-#         title_view = TitleView()
-#         self.window.show_view(title_view)
+    def on_mouse_press(self, _x, _y, _button, _modifiers):
+        title_view = TitleView()
+        self.window.show_view(title_view)
