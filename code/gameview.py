@@ -11,7 +11,7 @@ import portal
 import visual_constants as vc
 import physics_constants as pc
 import new_screens
-from paths import ASSETS_PATH, MUSIC_PATH
+from paths import ASSETS_PATH, GAMEVIEW_MUSIC_PATH
 from typing import Optional
 
 MUSIC_VOLUME = 0.5
@@ -178,7 +178,7 @@ class GameView(arcade.View):
                                             body_type=arcade.PymunkPhysicsEngine.STATIC)
 
     def music_setup(self):
-        self.music_list = [MUSIC_PATH]
+        self.music_list = [GAMEVIEW_MUSIC_PATH]
         self.current_song_index = 0
         self.play_song()
 

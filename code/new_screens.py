@@ -6,6 +6,8 @@ import arcade
 import visual_constants as vc
 import paths as path
 
+MUSIC_VOLUME = 0.5
+
 
 class TitleView(arcade.View):
 
@@ -13,11 +15,13 @@ class TitleView(arcade.View):
         super().__init__()
         arcade.set_background_color(arcade.color_from_hex_string("27a7d8"))
         self.texture = arcade.load_texture(path.TITLE_PATH)
+        self.background_music = arcade.load_sound(path.NEW_SCREENS_MUSIC_PATH)
 
     def on_show_view(self):
         """ This is run once when we switch to this view """
         arcade.set_background_color(arcade.color_from_hex_string("27a7d8"))
         arcade.set_viewport(0, self.window.width, 0, self.window.height)
+        self.music_player = self.background_music.play(MUSIC_VOLUME, loop=True)
 
     def on_draw(self):
         """ Draw this view """
@@ -27,16 +31,17 @@ class TitleView(arcade.View):
 
     def on_mouse_press(self, _x, _y, _button, _modifiers):
         """ If the user presses the mouse button, start the game. """
-        inst_view = InstructionView()
+        inst_view = InstructionView(self.music_player)
         self.window.show_view(inst_view)
 
 
 class InstructionView(arcade.View):
 
-    def __init__(self):
+    def __init__(self, music_player):
         super().__init__()
         arcade.set_background_color(arcade.color_from_hex_string("cccc00"))
         self.texture = arcade.load_texture(path.INSTRUCTIONS_PATH)
+        self.music_player = music_player
 
     def on_show_view(self):
         """ This is run once when we switch to this view """
@@ -45,6 +50,9 @@ class InstructionView(arcade.View):
         # Reset the viewport, necessary if we have a scrolling game and we need
         # to reset the viewport back to the start so we can see what we draw.
         arcade.set_viewport(0, self.window.width, 0, self.window.height)
+
+    def on_hide_view(self):
+        self.music_player.pause()
 
     def on_draw(self):
         """ Draw this view """
