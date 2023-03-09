@@ -25,3 +25,5 @@ RUN_SHOOT_PATH = PLAYER_PATH/"run-shoot"
 JUMP_PATH = PLAYER_PATH/"jump"
 
 CLIMB_PATH = PLAYER_PATH/"climb"
+
+MUSIC_PATH = ASSETS_PATH/"music"/"TwilightForest.mp3"
