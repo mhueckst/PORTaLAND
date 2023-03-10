@@ -43,7 +43,8 @@ class GameView(arcade.View):
         sprite_width = 256
         sprite_height = 256
         file_name = ":resources:images/spritesheets/explosion.png"
-        self.explosion_texture_list = arcade.load_spritesheet(file_name, sprite_width, sprite_height, columns, count)
+        self.explosion_texture_list = arcade.load_spritesheet(
+            file_name, sprite_width, sprite_height, columns, count)
 
         # self.blue_portal_texture_list = arcade.load_spritesheet(
         #     filename_blue, sprite_width, sprite_height, columns, count)
@@ -61,15 +62,17 @@ class GameView(arcade.View):
 
         self.level = 1
 
-        # Variables to track if WASD keys are pressed
+        # Variables to track which keys are pressed
         self.A_pressed: bool = False
         self.D_pressed: bool = False
         self.W_pressed: bool = False
         self.S_pressed: bool = False
 
         # Load sounds:
-        self.portal_gun_sound = arcade.sound.load_sound(":resources:sounds/lose2.wav")
-        self.hit_sound = arcade.sound.load_sound(":resources:sounds/upgrade1.wav")
+        self.portal_gun_sound = arcade.sound.load_sound(
+            ":resources:sounds/lose2.wav")
+        self.hit_sound = arcade.sound.load_sound(
+            ":resources:sounds/upgrade1.wav")
 
     def setup(self):
 
@@ -111,7 +114,6 @@ class GameView(arcade.View):
         # self.bullet_list = arcade.SpriteList()
         # self.blue_portal_list = arcade.SpriteList()
         # self.orange_portal_list = arcade.SpriteList()
-
 
         # Create player sprite
         # NOTE: Another parameter could be added to this class to
@@ -184,6 +186,9 @@ class GameView(arcade.View):
                 self.player_sprite.change_y = -(pc.PLAYER_MAX_SPEED_VERT)
                 self.physics_engine.set_velocity(
                     self.player_sprite, (self.player_sprite.change_x, self.player_sprite.change_y))
+        elif key == arcade.key.ESCAPE:
+            pause = new_screens.PauseView(self)
+            self.window.show_view(pause)
 
     def on_key_release(self, key, modifiers):
         if key == arcade.key.A:
@@ -233,8 +238,10 @@ class GameView(arcade.View):
         self.explosions_list.update()
 
         for bullet in self.bullet_list:
-            portal_wall_hit = arcade.check_for_collision_with_list(bullet, self.portal_walls)
-            normal_wall_hit = arcade.check_for_collision_with_list(bullet, self.ground)
+            portal_wall_hit = arcade.check_for_collision_with_list(
+                bullet, self.portal_walls)
+            normal_wall_hit = arcade.check_for_collision_with_list(
+                bullet, self.ground)
 
             # Handle hitting portal walls
             if len(portal_wall_hit) > 0:
@@ -325,9 +332,9 @@ class GameView(arcade.View):
             game_over_view = new_screens.GameOverView()
             self.window.show_view(game_over_view)
 
-
     def player_portal_collision_handler(self):
-        collision_portal_list = arcade.check_for_collision_with_list(self.player_sprite, self.portal_walls) #CHANGE BACK TO PORTAL SPRITES
+        collision_portal_list = arcade.check_for_collision_with_list(
+            self.player_sprite, self.portal_walls)  # CHANGE BACK TO PORTAL SPRITES
         exit_portal = None
         if len(collision_portal_list) == 0:
             return
@@ -335,7 +342,6 @@ class GameView(arcade.View):
         exit_portal = self.find_exit_portal(entry_portal)
 
         self.player_sprite.portal_physics_handler(entry_portal, exit_portal)
-
 
     def on_draw(self):
         self.clear()
@@ -356,7 +362,8 @@ class GameView(arcade.View):
     def on_mouse_press(self, x: int, y: int, button: int, modifiers: int):
         # Create a 'bullet' laser w/ sound
         arcade.play_sound(self.portal_gun_sound)
-        bullet = arcade.Sprite(":resources:images/space_shooter/laserBlue01.png", vc.SCALING_LASER)
+        bullet = arcade.Sprite(
+            ":resources:images/space_shooter/laserBlue01.png", vc.SCALING_LASER)
         # bullet = arcade.Sprite(ASSETS_PATH/"images/SPRITES/misc/shot/shot-2.png", vc.SCALING_LASER)
 
         # Position the bullet at the player's current location
@@ -386,13 +393,12 @@ class GameView(arcade.View):
     def find_exit_portal(self, entry_portal):
         ct = 0
         exit_portal = None
-        for p in self.portal_walls:  #CHANGE BACK TO PORTAL SPRITES
+        for p in self.portal_walls:  # CHANGE BACK TO PORTAL SPRITES
             if p is not entry_portal:
                 exit_portal = p
-                #break
+                # break
             ct += 1
             if ct > 2:
                 break
 
         return exit_portal
-
