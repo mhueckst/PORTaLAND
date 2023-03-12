@@ -5,13 +5,16 @@ written by the Firm (trying out creepy anonymous corporation names)
 """
 import math
 import arcade
+import time
 import player
 import portal
 import visual_constants as vc
 import physics_constants as pc
 import new_screens
-from paths import ASSETS_PATH
+from paths import ASSETS_PATH, GAMEVIEW_MUSIC_PATH
 from typing import Optional
+
+MUSIC_VOLUME = 0.5
 
 
 class GameView(arcade.View):
@@ -74,6 +77,13 @@ class GameView(arcade.View):
         self.hit_sound = arcade.sound.load_sound(
             ":resources:sounds/upgrade1.wav")
 
+
+        # Variables used to manage music
+        self.music_list = []
+        self.current_song_index = 0
+        self.current_song_player = None
+        self.music = None
+
     def setup(self):
 
         # Set default background color
@@ -85,6 +95,7 @@ class GameView(arcade.View):
         self.physics_engine_setup()
         self.create_screen_boundaries(vc.SCREEN_WIDTH, vc.SCREEN_HEIGHT)
         self.add_sprites_to_physics_engine()
+        self.music_setup()
         self.bullet_list = arcade.SpriteList()
         self.blue_portal_list = arcade.SpriteList()
         self.orange_portal_list = arcade.SpriteList()
@@ -198,6 +209,22 @@ class GameView(arcade.View):
                                             friction=pc.WALL_FRICTION,
                                             collision_type="wall",
                                             body_type=arcade.PymunkPhysicsEngine.STATIC)
+
+    def music_setup(self):
+        self.music_list = [GAMEVIEW_MUSIC_PATH]
+        self.current_song_index = 0
+        self.play_song()
+
+    def play_song(self):
+        # Stop music currently playing
+        if self.music:
+            self.music.stop()
+
+        # Play next song
+        self.music = arcade.Sound(
+            self.music_list[self.current_song_index], streaming=True)
+        self.current_song_player = self.music.play(MUSIC_VOLUME)
+        time.sleep(0.03)
 
     def on_key_press(self, key, modifiers):
         if key == arcade.key.A:
@@ -313,6 +340,8 @@ class GameView(arcade.View):
             #     for portal in hit_list:
             #         portal.remove_from_sprite_lists()
 
+        self.update_music()
+
     def apply_player_movement(self, key, is_on_ground, friction):
         force = self.get_force(key, is_on_ground)
         self.apply_player_force(force)
@@ -371,6 +400,19 @@ class GameView(arcade.View):
         exit_portal = self.find_exit_portal(entry_portal)
 
         self.player_sprite.portal_physics_handler(entry_portal, exit_portal)
+
+
+    def update_music(self):
+        stream_position = self.music.get_stream_position(
+            self.current_song_player)
+        if stream_position == 0.0:
+            self.advance_song()
+            self.play_song()
+
+    def advance_song(self):
+        self.current_song_index += 1
+        if self.current_song_index >= len(self.music_list):
+            self.current_song_index = 0
 
     def on_draw(self):
         self.clear()

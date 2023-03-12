@@ -25,3 +25,7 @@ RUN_SHOOT_PATH = PLAYER_PATH/"run-shoot"
 JUMP_PATH = PLAYER_PATH/"jump"
 
 CLIMB_PATH = PLAYER_PATH/"climb"
+
+GAMEVIEW_MUSIC_PATH = ASSETS_PATH/"music"/"TwilightForest.mp3"
+
+NEW_SCREENS_MUSIC_PATH = ASSETS_PATH/"music"/"TheTunnel.mp3"
