@@ -27,39 +27,12 @@ class GameView(arcade.View):
         self.buildings = None
         self.exit = None
         self.portal_walls = None
-        # self.blue_portal_texture_list = []
-        # self.orange_portal_texture_list = []
-        # self.explosion_texture_list = []
         self.portal_sprite = None
         self.sprite_list = None
         self.bullet_list = None
         self.portal_list = []
-        # self.blue_portal_list = None
-        # self.orange_portal_list = None
-        # self.explosions_list = None
-
-        # columns = 5
-        # count = 20
-        # sprite_width = 320
-        # sprite_height = 384
-        # filename_blue = ASSETS_PATH/"images/SPRITES/portal_spritesheets/blue_portal_spritesheet.png"
-        # filename_orange = ASSETS_PATH/"images/SPRITES/portal_spritesheets/orange_portal_spritesheet.png"
-        #
-        # ex_columns = 16
-        # ex_count = 60
-        # ex_sprite_width = 256
-        # ex_sprite_height = 256
-        # ex_file_name = ASSETS_PATH/"images/SPRITES/portal_spritesheets/explosion.png"
-        #
-        # self.explosion_texture_list = arcade.load_spritesheet(
-        #     ex_file_name, ex_sprite_width, ex_sprite_height, ex_columns, ex_count)
-        #
-        # self.blue_portal_texture_list = arcade.load_spritesheet(
-        #     filename_blue, sprite_width, sprite_height, columns, count)
-        #
-        # self.orange_portal_texture_list = arcade.load_spritesheet(
-        #     filename_orange, sprite_width, sprite_height, columns, count)
-
+        self.blue_portal_sprite = None
+        self.orange_portal_sprite = None
 
         self.physics_engine = Optional[arcade.PymunkPhysicsEngine]
 
@@ -111,10 +84,7 @@ class GameView(arcade.View):
         # Initialize sprite lists
         self.sprite_list = arcade.SpriteList()
         self.bullet_list = arcade.SpriteList()
-        # self.blue_portal_list = arcade.SpriteList()
-        # self.orange_portal_list = arcade.SpriteList()
         self.portal_list = arcade.SpriteList()
-        # self.explosions_list = arcade.SpriteList()
 
         # Create player sprite
         # NOTE: Another parameter could be added to this class to
@@ -240,9 +210,6 @@ class GameView(arcade.View):
 
         self.player_portal_collision_handler()
         self.bullet_list.update()
-        # self.blue_portal_list.update()
-        # self.orange_portal_list.update()
-        # self.explosions_list.update()
         self.portal_list.update()
 
         for bullet in self.bullet_list:
@@ -251,13 +218,6 @@ class GameView(arcade.View):
 
             # Handle hitting portal walls
             if len(portal_wall_hit) > 0:
-                # explosion = portal.Portal(self.explosion_texture_list)
-                # explosion.center_x = portal_wall_hit[0].center_x
-                # explosion.center_y = portal_wall_hit[0].center_y
-                # # Call update() because it sets which image we start on
-                # explosion.update()
-                # # Add to a list of sprites that are explosions
-                # self.explosions_list.append(explosion)
                 blue_portal = self.blue_portal_sprite
                 orange_portal = self.orange_portal_sprite
 
@@ -298,10 +258,6 @@ class GameView(arcade.View):
 
             if bullet.bottom > vc.SCREEN_WIDTH or bullet.top < 0 or bullet.right < 0 or bullet.left > vc.SCREEN_WIDTH:
                 bullet.remove_from_sprite_lists()
-
-            # if len(hit_list) > 2:
-            #     for portal in hit_list:
-            #         portal.remove_from_sprite_lists()
 
     def apply_player_movement(self, key, is_on_ground, friction):
         force = self.get_force(key, is_on_ground)
@@ -374,9 +330,6 @@ class GameView(arcade.View):
         self.exit.draw()
         self.sprite_list.draw()
         self.bullet_list.draw()
-        # self.blue_portal_list.draw()
-        # self.orange_portal_list.draw()
-        # self.explosions_list.draw()
         self.blue_portal_sprite.draw()
         self.orange_portal_sprite.draw()
 
