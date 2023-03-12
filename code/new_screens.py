@@ -52,16 +52,6 @@ class InstructionView(arcade.View):
         self.texture.draw_scaled(
             self.window.width / 2, self.window.height / 2, 1)
 
-        # commented out code for reference of how to add text or position things
-        # def draw_scaled(self, center_x: float, center_y: float,
-        #                 scale: float = 1.0,
-        #                 angle: float = 0,
-        #                 alpha: int = 255):
-        # arcade.draw_text("Instructions Screen", self.window.width / 2, self.window.height / 2,
-        #                  arcade.color.WHITE, font_size=50, anchor_x="center")
-        # arcade.draw_text("Click to advance", self.window.width / 2, self.window.height / 2-75,
-        #                  arcade.color.WHITE, font_size=20, anchor_x="center")
-
     def on_mouse_press(self, _x, _y, _button, _modifiers):
         """ If the user presses the mouse button, start the game. """
         game_view = gameview.GameView()
