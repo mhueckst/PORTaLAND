@@ -65,7 +65,7 @@ class GameView(arcade.View):
 
         self.level = 1
 
-        # Variables to track if WASD keys are pressed
+        # Variables to track which keys are pressed
         self.A_pressed: bool = False
         self.D_pressed: bool = False
         self.W_pressed: bool = False
@@ -245,6 +245,9 @@ class GameView(arcade.View):
                 self.player_sprite.change_y = -(pc.PLAYER_MAX_SPEED_VERT)
                 self.physics_engine.set_velocity(
                     self.player_sprite, (self.player_sprite.change_x, self.player_sprite.change_y))
+        elif key == arcade.key.ESCAPE:
+            pause = new_screens.PauseView(self)
+            self.window.show_view(pause)
 
     def on_key_release(self, key, modifiers):
         if key == arcade.key.A:

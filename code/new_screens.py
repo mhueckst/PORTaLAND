@@ -115,6 +115,72 @@ class GameOverView(arcade.View):
     def on_mouse_leave(self, x: float, y: float):
         self.selected = False
 
+# TODO: add option to quit?
+#     def on_mouse_press(self, _x, _y, _button, _modifiers):
+#         title_view = TitleView()
+#         self.window.show_view(title_view)
+
+
+class PauseView(arcade.View):
+    def __init__(self, game_view: arcade.View):
+        super().__init__()
+        self.game_view = game_view
+        self.fill_color = arcade.make_transparent_color(
+            arcade.color.WHITE, transparency=150)
+
+    def on_draw(self):
+        self.game_view.on_draw()
+
+        arcade.draw_lrtb_rectangle_filled(
+            left=0,
+            right=vc.SCREEN_WIDTH,
+            top=vc.SCREEN_HEIGHT,
+            bottom=0,
+            color=self.fill_color
+        )
+
+        self.draw_pause_screen_text()
+
+    def draw_pause_screen_text(self):
+        arcade.draw_text(
+            "PAUSED",
+            vc.SCREEN_WIDTH // 2,
+            vc.SCREEN_HEIGHT // 1.75,
+            arcade.color.INDIGO,
+            font_size=60,
+            font_name="Kenney Future",
+            anchor_x="center"
+        )
+
+        arcade.draw_text(
+            "ESC to continue",
+            vc.SCREEN_WIDTH // 2,
+            vc.SCREEN_HEIGHT // 2.1,
+            arcade.color.DARK_MAGENTA,
+            font_size=30,
+            font_name="Kenney Pixel",
+            anchor_x="center",
+            bold=True
+        )
+
+        arcade.draw_text(
+            "ENTER to quit",
+            vc.SCREEN_WIDTH // 2,
+            vc.SCREEN_HEIGHT // 2.5,
+            arcade.color.DARK_MAGENTA,
+            font_size=30,
+            font_name="Kenney Pixel",
+            anchor_x="center",
+            bold=True
+        )
+
+    def on_key_press(self, key, modifiers):
+        if key == arcade.key.ESCAPE:
+            self.window.show_view(self.game_view)
+        elif key == arcade.key.ENTER:
+            game_over_view = GameOverView()
+            self.window.show_view(game_over_view)
+            
     def on_mouse_press(self, _x, _y, _button, _modifiers):
         title_view = TitleView()
         self.window.show_view(title_view)
