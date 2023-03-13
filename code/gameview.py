@@ -31,6 +31,9 @@ class GameView(arcade.View):
         self.orange_portal_texture_list = []
         self.explosion_texture_list = []
 
+        self.player_sprite = None
+
+
         # columns = 2
         # count = 4
         # sprite_width = 100
@@ -57,6 +60,8 @@ class GameView(arcade.View):
         self.orange_portal_list = None
         self.explosions_list = None
 
+        self.player_list = None
+
         self.physics_engine = Optional[arcade.PymunkPhysicsEngine]
 
         self.level = 1
@@ -71,11 +76,15 @@ class GameView(arcade.View):
         self.portal_gun_sound = arcade.sound.load_sound(":resources:sounds/lose2.wav")
         self.hit_sound = arcade.sound.load_sound(":resources:sounds/upgrade1.wav")
 
+
+
     def setup(self):
 
         # Set default background color
         background_color = arcade.color.FRESH_AIR
         arcade.set_background_color(background_color)
+
+        self.player_list = arcade.SpriteList()
 
         self.map_setup()
         self.sprite_setup()
@@ -85,6 +94,7 @@ class GameView(arcade.View):
         self.blue_portal_list = arcade.SpriteList()
         self.orange_portal_list = arcade.SpriteList()
         self.explosions_list = arcade.SpriteList()
+
 
     def map_setup(self):
         # Map name
@@ -104,6 +114,10 @@ class GameView(arcade.View):
         self.ladders = tile_map.sprite_lists["ladders"]
         self.exit = tile_map.sprite_lists["exit"]
         self.portal_walls = tile_map.sprite_lists["portal walls"]
+        ct = 5
+        while ct > 0:
+            self.portal_walls.pop()
+            ct -= 1
 
     def sprite_setup(self):
         # Initialize sprite lists
@@ -136,6 +150,7 @@ class GameView(arcade.View):
 
     def add_sprites_to_physics_engine(self):
         # Add player to physics engine
+
         self.physics_engine.add_sprite(self.player_sprite,
                                        friction=pc.PLAYER_FRICTION,
                                        mass=pc.PLAYER_MASS,
@@ -328,13 +343,23 @@ class GameView(arcade.View):
 
     def player_portal_collision_handler(self):
         collision_portal_list = arcade.check_for_collision_with_list(self.player_sprite, self.portal_walls) #CHANGE BACK TO PORTAL SPRITES
-        exit_portal = None
         if len(collision_portal_list) == 0:
             return
         entry_portal = collision_portal_list[0]
         exit_portal = self.find_exit_portal(entry_portal)
+        self.player_sprite.remove_from_sprite_lists()
+        self.player_sprite = player.Player(self.ladders)
+        self.sprite_list.append(self.player_sprite)
 
-        self.player_sprite.portal_physics_handler(entry_portal, exit_portal)
+        self.player_sprite.position = self.player_sprite.portal_physics_handler(entry_portal, exit_portal)
+        self.physics_engine.add_sprite(self.player_sprite,
+                                       friction=pc.PLAYER_FRICTION,
+                                       mass=pc.PLAYER_MASS,
+                                       moment=arcade.PymunkPhysicsEngine.MOMENT_INF,
+                                       collision_type="player",
+                                       max_horizontal_velocity=pc.PLAYER_MAX_SPEED_HORIZ,
+                                       max_vertical_velocity=pc.PLAYER_MAX_SPEED_VERT)
+
 
 
     def on_draw(self):
@@ -390,9 +415,9 @@ class GameView(arcade.View):
             if p is not entry_portal:
                 exit_portal = p
                 #break
-            ct += 1
-            if ct > 2:
-                break
+            #ct += 1
+            #if ct > 3:
+               # break
 
         return exit_portal
 
