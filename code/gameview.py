@@ -77,6 +77,7 @@ class GameView(arcade.View):
         self.hit_sound = arcade.sound.load_sound(
             ":resources:sounds/upgrade1.wav")
 
+
         # Variables used to manage music
         self.music_list = []
         self.current_song_index = 0
@@ -92,6 +93,7 @@ class GameView(arcade.View):
         self.map_setup()
         self.sprite_setup()
         self.physics_engine_setup()
+        self.create_screen_boundaries(vc.SCREEN_WIDTH, vc.SCREEN_HEIGHT)
         self.add_sprites_to_physics_engine()
         self.music_setup()
         self.bullet_list = arcade.SpriteList()
@@ -145,6 +147,37 @@ class GameView(arcade.View):
         # Create physics engine
         self.physics_engine = arcade.PymunkPhysicsEngine(
             damping=damping, gravity=gravity)
+
+    def create_screen_boundaries(self, width, height):
+        # Create left boundary
+        left_boundary = arcade.SpriteSolidColor(1, height, arcade.color.BLACK)
+        left_boundary.center_x = 0
+        left_boundary.center_y = height / 2
+
+        # Create right boundary
+        right_boundary = arcade.SpriteSolidColor(1, height, arcade.color.BLACK)
+        right_boundary.center_x = width
+        right_boundary.center_y = height / 2
+
+        # Create top boundary
+        top_boundary = arcade.SpriteSolidColor(width, 1, arcade.color.BLACK)
+        top_boundary.center_x = width / 2
+        top_boundary.center_y = height
+
+        # Create bottom boundary
+        bottom_boundary = arcade.SpriteSolidColor(width, 1, arcade.color.BLACK)
+        bottom_boundary.center_x = width / 2
+        bottom_boundary.center_y = 0
+
+        # Add boundaries to physics engine
+        self.physics_engine.add_sprite(
+            left_boundary, body_type=arcade.PymunkPhysicsEngine.STATIC)
+        self.physics_engine.add_sprite(
+            right_boundary, body_type=arcade.PymunkPhysicsEngine.STATIC)
+        self.physics_engine.add_sprite(
+            top_boundary, body_type=arcade.PymunkPhysicsEngine.STATIC)
+        self.physics_engine.add_sprite(
+            bottom_boundary, body_type=arcade.PymunkPhysicsEngine.STATIC)
 
     def add_sprites_to_physics_engine(self):
         # Add player to physics engine
@@ -343,14 +376,14 @@ class GameView(arcade.View):
 
     def keep_sprites_within_bounds(self):
         for sprite in self.sprite_list:
-            if sprite.right > vc.SCREEN_WIDTH:
-                sprite.right = vc.SCREEN_WIDTH - 24
-            elif sprite.left < 0:
-                sprite.left = 24
-            if sprite.top > vc.SCREEN_HEIGHT:
-                sprite.top = vc.SCREEN_HEIGHT
-            elif sprite.bottom < 32:
-                sprite.bottom = 32
+            if sprite.center_x < sprite.width / 2:
+                sprite.center_x = sprite.width / 2
+            elif sprite.center_x > vc.SCREEN_WIDTH - sprite.width / 2:
+                sprite.center_x = vc.SCREEN_WIDTH - sprite.width / 2
+            if sprite.center_y < sprite.height / 2:
+                sprite.center_y = sprite.height / 2
+            elif sprite.center_y > vc.SCREEN_HEIGHT - sprite.height / 2:
+                sprite.center_y = vc.SCREEN_HEIGHT - sprite.height / 2
 
     def check_exit_tile_collision(self):
         if arcade.check_for_collision_with_list(self.player_sprite, self.exit):
@@ -367,6 +400,7 @@ class GameView(arcade.View):
         exit_portal = self.find_exit_portal(entry_portal)
 
         self.player_sprite.portal_physics_handler(entry_portal, exit_portal)
+
 
     def update_music(self):
         stream_position = self.music.get_stream_position(
