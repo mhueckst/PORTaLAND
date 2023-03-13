@@ -5,13 +5,16 @@ written by the Firm (trying out creepy anonymous corporation names)
 """
 import math
 import arcade
+import time
 import player
 import portal
 import visual_constants as vc
 import physics_constants as pc
 import new_screens
-from paths import ASSETS_PATH
+from paths import ASSETS_PATH, GAMEVIEW_MUSIC_PATH
 from typing import Optional
+
+MUSIC_VOLUME = 0.5
 
 
 class GameView(arcade.View):
@@ -74,6 +77,13 @@ class GameView(arcade.View):
         self.hit_sound = arcade.sound.load_sound(
             ":resources:sounds/upgrade1.wav")
 
+
+        # Variables used to manage music
+        self.music_list = []
+        self.current_song_index = 0
+        self.current_song_player = None
+        self.music = None
+
     def setup(self):
 
         # Set default background color
@@ -83,7 +93,9 @@ class GameView(arcade.View):
         self.map_setup()
         self.sprite_setup()
         self.physics_engine_setup()
+        self.create_screen_boundaries(vc.SCREEN_WIDTH, vc.SCREEN_HEIGHT)
         self.add_sprites_to_physics_engine()
+        self.music_setup()
         self.bullet_list = arcade.SpriteList()
         self.blue_portal_list = arcade.SpriteList()
         self.orange_portal_list = arcade.SpriteList()
@@ -136,6 +148,37 @@ class GameView(arcade.View):
         self.physics_engine = arcade.PymunkPhysicsEngine(
             damping=damping, gravity=gravity)
 
+    def create_screen_boundaries(self, width, height):
+        # Create left boundary
+        left_boundary = arcade.SpriteSolidColor(1, height, arcade.color.BLACK)
+        left_boundary.center_x = 0
+        left_boundary.center_y = height / 2
+
+        # Create right boundary
+        right_boundary = arcade.SpriteSolidColor(1, height, arcade.color.BLACK)
+        right_boundary.center_x = width
+        right_boundary.center_y = height / 2
+
+        # Create top boundary
+        top_boundary = arcade.SpriteSolidColor(width, 1, arcade.color.BLACK)
+        top_boundary.center_x = width / 2
+        top_boundary.center_y = height
+
+        # Create bottom boundary
+        bottom_boundary = arcade.SpriteSolidColor(width, 1, arcade.color.BLACK)
+        bottom_boundary.center_x = width / 2
+        bottom_boundary.center_y = 0
+
+        # Add boundaries to physics engine
+        self.physics_engine.add_sprite(
+            left_boundary, body_type=arcade.PymunkPhysicsEngine.STATIC)
+        self.physics_engine.add_sprite(
+            right_boundary, body_type=arcade.PymunkPhysicsEngine.STATIC)
+        self.physics_engine.add_sprite(
+            top_boundary, body_type=arcade.PymunkPhysicsEngine.STATIC)
+        self.physics_engine.add_sprite(
+            bottom_boundary, body_type=arcade.PymunkPhysicsEngine.STATIC)
+
     def add_sprites_to_physics_engine(self):
         # Add player to physics engine
         self.physics_engine.add_sprite(self.player_sprite,
@@ -166,6 +209,22 @@ class GameView(arcade.View):
                                             friction=pc.WALL_FRICTION,
                                             collision_type="wall",
                                             body_type=arcade.PymunkPhysicsEngine.STATIC)
+
+    def music_setup(self):
+        self.music_list = [GAMEVIEW_MUSIC_PATH]
+        self.current_song_index = 0
+        self.play_song()
+
+    def play_song(self):
+        # Stop music currently playing
+        if self.music:
+            self.music.stop()
+
+        # Play next song
+        self.music = arcade.Sound(
+            self.music_list[self.current_song_index], streaming=True)
+        self.current_song_player = self.music.play(MUSIC_VOLUME)
+        time.sleep(0.03)
 
     def on_key_press(self, key, modifiers):
         if key == arcade.key.A:
@@ -284,6 +343,8 @@ class GameView(arcade.View):
             #     for portal in hit_list:
             #         portal.remove_from_sprite_lists()
 
+        self.update_music()
+
     def apply_player_movement(self, key, is_on_ground, friction):
         force = self.get_force(key, is_on_ground)
         self.apply_player_force(force)
@@ -318,14 +379,14 @@ class GameView(arcade.View):
 
     def keep_sprites_within_bounds(self):
         for sprite in self.sprite_list:
-            if sprite.right > vc.SCREEN_WIDTH:
-                sprite.right = vc.SCREEN_WIDTH - 24
-            elif sprite.left < 0:
-                sprite.left = 24
-            if sprite.top > vc.SCREEN_HEIGHT:
-                sprite.top = vc.SCREEN_HEIGHT
-            elif sprite.bottom < 32:
-                sprite.bottom = 32
+            if sprite.center_x < sprite.width / 2:
+                sprite.center_x = sprite.width / 2
+            elif sprite.center_x > vc.SCREEN_WIDTH - sprite.width / 2:
+                sprite.center_x = vc.SCREEN_WIDTH - sprite.width / 2
+            if sprite.center_y < sprite.height / 2:
+                sprite.center_y = sprite.height / 2
+            elif sprite.center_y > vc.SCREEN_HEIGHT - sprite.height / 2:
+                sprite.center_y = vc.SCREEN_HEIGHT - sprite.height / 2
 
     def check_exit_tile_collision(self):
         if arcade.check_for_collision_with_list(self.player_sprite, self.exit):
@@ -342,6 +403,19 @@ class GameView(arcade.View):
         exit_portal = self.find_exit_portal(entry_portal)
 
         self.player_sprite.portal_physics_handler(entry_portal, exit_portal)
+
+
+    def update_music(self):
+        stream_position = self.music.get_stream_position(
+            self.current_song_player)
+        if stream_position == 0.0:
+            self.advance_song()
+            self.play_song()
+
+    def advance_song(self):
+        self.current_song_index += 1
+        if self.current_song_index >= len(self.music_list):
+            self.current_song_index = 0
 
     def on_draw(self):
         self.clear()
