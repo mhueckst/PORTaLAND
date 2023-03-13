@@ -6,6 +6,7 @@ import visual_constants as vc
 import physics_constants as pc
 import paths as path
 
+
 class Portal(arcade.Sprite):
     """ This class creates a portal animation """
 
@@ -30,4 +31,3 @@ class Portal(arcade.Sprite):
             texture = arcade.load_texture_pair(
                 f"{path.PORTAL_PATH}/blue_portal-{i}.png")
             self.portal_textures.append(texture)
-
