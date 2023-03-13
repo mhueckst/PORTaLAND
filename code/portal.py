@@ -17,13 +17,13 @@ class Portal(arcade.Sprite):
         self.current_texture = 0
         self.textures = texture_list
 
-    def update(self):
 
+    def update(self):
         self.current_texture += 1
         if self.current_texture < len(self.textures):
             self.set_texture(self.current_texture)
-        else:
-            self.remove_from_sprite_lists()
+        # else:
+            # self.remove_from_sprite_lists()
 
     def load_portal_textures(self):
         self.active_textures = []
