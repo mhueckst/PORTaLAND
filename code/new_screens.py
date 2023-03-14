@@ -39,13 +39,13 @@ class InstructionView(arcade.View):
 
     def __init__(self, music_player):
         super().__init__()
-        arcade.set_background_color(arcade.color_from_hex_string("cccc00"))
+        arcade.set_background_color(arcade.color_from_hex_string("fceab8"))
         self.texture = arcade.load_texture(path.INSTRUCTIONS_PATH)
         self.music_player = music_player
 
     def on_show_view(self):
         """ This is run once when we switch to this view """
-        arcade.set_background_color(arcade.color_from_hex_string("cccc00"))
+        arcade.set_background_color(arcade.color_from_hex_string("fceab8"))
 
         # Reset the viewport, necessary if we have a scrolling game and we need
         # to reset the viewport back to the start so we can see what we draw.
@@ -170,7 +170,7 @@ class PauseView(arcade.View):
         elif key == arcade.key.ENTER:
             game_over_view = GameOverView()
             self.window.show_view(game_over_view)
-            
+
     def on_mouse_press(self, _x, _y, _button, _modifiers):
         title_view = TitleView()
         self.window.show_view(title_view)

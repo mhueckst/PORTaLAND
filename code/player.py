@@ -149,53 +149,33 @@ class Player(arcade.Sprite):
 
     def portal_physics_handler(self, entry_portal, exit_portal):
 
-        (x_entry_port, y_entry_port) = entry_portal.position
+
+        #(x_entry_port, y_entry_port) = entry_portal.position (for use with floor portals potentially)
         (x_exit_port, y_exit_port) = exit_portal.position
-        y_bottom_exit_port = exit_portal.bottom
-        self.set_position(x_exit_port, y_exit_port)
-        self.bottom = y_bottom_exit_port
 
+        new_player_pos_x = x_exit_port
+        new_player_pos_y = y_exit_port
 
-        velocity_update = [pc.PLAYER_MAX_SPEED_HORIZ, pc.PLAYER_MAX_SPEED_VERT]
-        [vel_x, vel_y] = velocity_update
-
-
-        #check where collision is, apply dx, dy accordingly
-        #new fxn?
         exit_port_left = exit_portal.left
         exit_port_right = exit_portal.right
-        entry_port_left = entry_portal.left
-        entry_port_right = entry_portal.right
+        #entry_port_left = entry_portal.left    (will need if we have level with floor portals)
+        #entry_port_right = entry_portal.right
 
         exit_width_check = abs(exit_port_right - exit_port_left)
-        entry_width_check = abs(entry_port_right - entry_port_left)
 
-        if entry_width_check <= vc.TILE_SIZE*2:
-            if exit_width_check <= vc.TILE_SIZE*2:
-                opposing_wall_check = abs(entry_port_right - exit_port_right)
-                if opposing_wall_check > 0:
-                    velocity_update[0] = -vel_x
-            elif y_exit_port <= vc.TILE_SIZE*2:
-                if x_entry_port >= (vc.SCREEN_WIDTH - vc.TILE_SIZE*5):
-                    velocity_update = [vel_y, -vel_x]
-                else:
-                    velocity_update = [vel_y, vel_x]
+        if exit_width_check < vc.TILE_SIZE*2:
+            if x_exit_port < vc.TILE_SIZE * 2:
+                new_player_pos_x += vc.TILE_SIZE*2
             else:
-                if x_entry_port >= (vc.SCREEN_WIDTH - vc.TILE_SIZE*5):
-                    velocity_update = [vel_y, vel_x]
-                else:
-                    velocity_update = [vel_y, -vel_x]
+                new_player_pos_x -= vc.TILE_SIZE*2
         else:
-            if exit_width_check <= vc.TILE_SIZE*2:
-                if x_exit_port >= (vc.SCREEN_WIDTH - vc.TILE_SIZE*5):
-                    velocity_update = [vel_y, vel_x]
-                else:
-                    velocity_update = [vel_y, -vel_x]
-            elif y_exit_port <= vc.TILE_SIZE*2:
-                velocity_update[1] = -vel_y
+            if y_exit_port < vc.TILE_SIZE*2:
+                new_player_pos_y += vc.TILE_SIZE*2
+            else:
+                new_player_pos_y -= vc.TILE_SIZE*2
 
-        self.velocity = velocity_update
-        self.pymunk.gravity = (0, -pc.GRAVITY)
-        self.pymunk.damping = pc.PLAYER_DAMPING
+        return (new_player_pos_x, new_player_pos_y)
+
+
 
 
