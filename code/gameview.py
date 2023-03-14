@@ -5,13 +5,16 @@ written by the Firm (trying out creepy anonymous corporation names)
 """
 import math
 import arcade
+import time
 import player
 import portal
 import visual_constants as vc
 import physics_constants as pc
 import new_screens
-from paths import ASSETS_PATH
+from paths import ASSETS_PATH, GAMEVIEW_MUSIC_PATH
 from typing import Optional
+
+MUSIC_VOLUME = 0.5
 
 
 class GameView(arcade.View):
@@ -27,6 +30,7 @@ class GameView(arcade.View):
         self.buildings = None
         self.exit = None
         self.portal_walls = None
+        self.portal_sprite = None
         self.blue_portal_texture_list = []
         self.orange_portal_texture_list = []
         self.explosion_texture_list = []
@@ -46,7 +50,8 @@ class GameView(arcade.View):
         sprite_width = 256
         sprite_height = 256
         file_name = ":resources:images/spritesheets/explosion.png"
-        self.explosion_texture_list = arcade.load_spritesheet(file_name, sprite_width, sprite_height, columns, count)
+        self.explosion_texture_list = arcade.load_spritesheet(
+            file_name, sprite_width, sprite_height, columns, count)
 
         # self.blue_portal_texture_list = arcade.load_spritesheet(
         #     filename_blue, sprite_width, sprite_height, columns, count)
@@ -56,9 +61,9 @@ class GameView(arcade.View):
         # Container to hold sprite lists
         self.sprite_list = None
         self.bullet_list = None
-        self.blue_portal_list = None
-        self.orange_portal_list = None
-        self.explosions_list = None
+        self.portal_list = []
+        self.blue_portal_sprite = None
+        self.orange_portal_sprite = None
 
         self.player_list = None
 
@@ -66,15 +71,27 @@ class GameView(arcade.View):
 
         self.level = 1
 
-        # Variables to track if WASD keys are pressed
+        # Variables to track which keys are pressed
         self.A_pressed: bool = False
         self.D_pressed: bool = False
         self.W_pressed: bool = False
         self.S_pressed: bool = False
 
         # Load sounds:
-        self.portal_gun_sound = arcade.sound.load_sound(":resources:sounds/lose2.wav")
-        self.hit_sound = arcade.sound.load_sound(":resources:sounds/upgrade1.wav")
+        self.portal_gun_sound = arcade.sound.load_sound(ASSETS_PATH/"sounds/forceField_000.wav")
+        self.hit_sound = arcade.sound.load_sound(ASSETS_PATH/"sounds/doorOpen_002.wav")
+        self.miss_sound = arcade.sound.load_sound(ASSETS_PATH/"sounds/laserLarge_000.wav")
+        self.portal_gun_sound = arcade.sound.load_sound(
+            ":resources:sounds/lose2.wav")
+        self.hit_sound = arcade.sound.load_sound(
+            ":resources:sounds/upgrade1.wav")
+
+
+        # Variables used to manage music
+        self.music_list = []
+        self.current_song_index = 0
+        self.current_song_player = None
+        self.music = None
 
 
 
@@ -89,7 +106,10 @@ class GameView(arcade.View):
         self.map_setup()
         self.sprite_setup()
         self.physics_engine_setup()
+        self.create_screen_boundaries(vc.SCREEN_WIDTH, vc.SCREEN_HEIGHT)
         self.add_sprites_to_physics_engine()
+
+        self.music_setup()
         self.bullet_list = arcade.SpriteList()
         self.blue_portal_list = arcade.SpriteList()
         self.orange_portal_list = arcade.SpriteList()
@@ -122,10 +142,11 @@ class GameView(arcade.View):
     def sprite_setup(self):
         # Initialize sprite lists
         self.sprite_list = arcade.SpriteList()
+        self.bullet_list = arcade.SpriteList()
+        self.portal_list = arcade.SpriteList()
         # self.bullet_list = arcade.SpriteList()
         # self.blue_portal_list = arcade.SpriteList()
         # self.orange_portal_list = arcade.SpriteList()
-
 
         # Create player sprite
         # NOTE: Another parameter could be added to this class to
@@ -139,6 +160,12 @@ class GameView(arcade.View):
         # Add to player sprite list
         self.sprite_list.append(self.player_sprite)
 
+        # Test that portal sprite can be loaded from path as sprite:
+        self.blue_portal_sprite = arcade.Sprite(ASSETS_PATH/"images/SPRITES/portal_spritesheets/blue_portal.png", .3)
+        self.orange_portal_sprite = arcade.Sprite(ASSETS_PATH/"images/SPRITES/portal_spritesheets/orange_portal.png", .3)
+
+        # self.sprite_list.append(self.portal_sprite)
+
     def physics_engine_setup(self):
         # Set damping and gravity
         damping = pc.DEF_DAMPING
@@ -147,6 +174,37 @@ class GameView(arcade.View):
         # Create physics engine
         self.physics_engine = arcade.PymunkPhysicsEngine(
             damping=damping, gravity=gravity)
+
+    def create_screen_boundaries(self, width, height):
+        # Create left boundary
+        left_boundary = arcade.SpriteSolidColor(1, height, arcade.color.BLACK)
+        left_boundary.center_x = 0
+        left_boundary.center_y = height / 2
+
+        # Create right boundary
+        right_boundary = arcade.SpriteSolidColor(1, height, arcade.color.BLACK)
+        right_boundary.center_x = width
+        right_boundary.center_y = height / 2
+
+        # Create top boundary
+        top_boundary = arcade.SpriteSolidColor(width, 1, arcade.color.BLACK)
+        top_boundary.center_x = width / 2
+        top_boundary.center_y = height
+
+        # Create bottom boundary
+        bottom_boundary = arcade.SpriteSolidColor(width, 1, arcade.color.BLACK)
+        bottom_boundary.center_x = width / 2
+        bottom_boundary.center_y = 0
+
+        # Add boundaries to physics engine
+        self.physics_engine.add_sprite(
+            left_boundary, body_type=arcade.PymunkPhysicsEngine.STATIC)
+        self.physics_engine.add_sprite(
+            right_boundary, body_type=arcade.PymunkPhysicsEngine.STATIC)
+        self.physics_engine.add_sprite(
+            top_boundary, body_type=arcade.PymunkPhysicsEngine.STATIC)
+        self.physics_engine.add_sprite(
+            bottom_boundary, body_type=arcade.PymunkPhysicsEngine.STATIC)
 
     def add_sprites_to_physics_engine(self):
         # Add player to physics engine
@@ -180,6 +238,24 @@ class GameView(arcade.View):
                                             collision_type="wall",
                                             body_type=arcade.PymunkPhysicsEngine.STATIC)
 
+        # self.physics_engine.add_sprite_list(self.blue_portal_list)
+
+    def music_setup(self):
+        self.music_list = [GAMEVIEW_MUSIC_PATH]
+        self.current_song_index = 0
+        self.play_song()
+
+    def play_song(self):
+        # Stop music currently playing
+        if self.music:
+            self.music.stop()
+
+        # Play next song
+        self.music = arcade.Sound(
+            self.music_list[self.current_song_index], streaming=True)
+        self.current_song_player = self.music.play(MUSIC_VOLUME)
+        time.sleep(0.03)
+
     def on_key_press(self, key, modifiers):
         if key == arcade.key.A:
             self.A_pressed = True
@@ -199,6 +275,9 @@ class GameView(arcade.View):
                 self.player_sprite.change_y = -(pc.PLAYER_MAX_SPEED_VERT)
                 self.physics_engine.set_velocity(
                     self.player_sprite, (self.player_sprite.change_x, self.player_sprite.change_y))
+        elif key == arcade.key.ESCAPE:
+            pause = new_screens.PauseView(self)
+            self.window.show_view(pause)
 
     def on_key_release(self, key, modifiers):
         if key == arcade.key.A:
@@ -243,46 +322,52 @@ class GameView(arcade.View):
 
         self.player_portal_collision_handler()
         self.bullet_list.update()
-        # self.blue_portal_list.update()
-        # self.orange_portal_list.update()
-        self.explosions_list.update()
+        self.portal_list.update()
 
         for bullet in self.bullet_list:
-            portal_wall_hit = arcade.check_for_collision_with_list(bullet, self.portal_walls)
-            normal_wall_hit = arcade.check_for_collision_with_list(bullet, self.ground)
+            portal_wall_hit = arcade.check_for_collision_with_list(
+                bullet, self.portal_walls)
+            normal_wall_hit = arcade.check_for_collision_with_list(
+                bullet, self.ground)
 
             # Handle hitting portal walls
             if len(portal_wall_hit) > 0:
-                explosion = portal.Portal(self.explosion_texture_list)
+                blue_portal = self.blue_portal_sprite
+                orange_portal = self.orange_portal_sprite
 
-                # Move it to the location of the coin
-                explosion.center_x = portal_wall_hit[0].center_x
-                explosion.center_y = portal_wall_hit[0].center_y
+                # Portal cycling logic:
+                if len(self.portal_list) == 0:
+                    blue_portal.center_x = portal_wall_hit[0].center_x
+                    blue_portal.center_y = portal_wall_hit[0].center_y
+                    blue_portal.update()
+                    self.portal_list.append(blue_portal)
+                if (self.portal_list[0] == blue_portal) and (len(self.portal_list) == 1):
+                    orange_portal.center_x = portal_wall_hit[0].center_x
+                    orange_portal.center_y = portal_wall_hit[0].center_y
+                    orange_portal.update()
+                    self.portal_list.append(orange_portal)
+                elif (self.portal_list[0] == blue_portal) and len(self.portal_list) == 2:
+                    self.portal_list.pop(0)
+                    self.portal_list.update()
+                    # blue_portal.remove_from_sprite_lists()
+                    blue_portal.center_x = portal_wall_hit[0].center_x
+                    blue_portal.center_y = portal_wall_hit[0].center_y
+                    blue_portal.update()
+                    self.portal_list.append(blue_portal)
+                elif self.portal_list[0] == orange_portal and len(self.portal_list) == 2:
+                    self.portal_list.pop(0)
+                    self.portal_list.update()
+                    # orange_portal.remove_from_sprite_lists()
+                    orange_portal.center_x = portal_wall_hit[0].center_x
+                    orange_portal.center_y = portal_wall_hit[0].center_y
+                    orange_portal.update()
+                    self.portal_list.append(orange_portal)
 
-                # Call update() because it sets which image we start on
-                explosion.update()
-
-                # Add to a list of sprites that are explosions
-                self.explosions_list.append(explosion)
-                # if len(hit_list) == 1:
-                #     blue_portal = portal.Portal(self.blue_portal_texture_list)
-                #     blue_portal.center_x = hit_list[0].center_x
-                #     blue_portal.center_y = hit_list[0].center_y
-                #     blue_portal.update()
-                #     self.blue_portal_list.append(blue_portal)
-                #
-                # elif len(hit_list) == 2:
-                #     orange_portal = portal.Portal(self.orange_portal_texture_list)
-                #     orange_portal.center_x = hit_list[0].center_x
-                #     orange_portal.center_y = hit_list[0].center_y
-                #     orange_portal.update()
-                #     self.orange_portal_list.append(orange_portal)
-                #
                 bullet.remove_from_sprite_lists()
                 arcade.play_sound(self.hit_sound)
 
             if len(normal_wall_hit) > 0:
-                arcade.play_sound(self.hit_sound)
+                arcade.play_sound(self.miss_sound)
                 bullet.remove_from_sprite_lists()
 
             if bullet.bottom > vc.SCREEN_WIDTH or bullet.top < 0 or bullet.right < 0 or bullet.left > vc.SCREEN_WIDTH:
@@ -291,6 +376,8 @@ class GameView(arcade.View):
             # if len(hit_list) > 2:
             #     for portal in hit_list:
             #         portal.remove_from_sprite_lists()
+
+        self.update_music()
 
     def apply_player_movement(self, key, is_on_ground, friction):
         force = self.get_force(key, is_on_ground)
@@ -326,23 +413,28 @@ class GameView(arcade.View):
 
     def keep_sprites_within_bounds(self):
         for sprite in self.sprite_list:
-            if sprite.right > vc.SCREEN_WIDTH:
-                sprite.right = vc.SCREEN_WIDTH - 24
-            elif sprite.left < 0:
-                sprite.left = 24
-            if sprite.top > vc.SCREEN_HEIGHT:
-                sprite.top = vc.SCREEN_HEIGHT
-            elif sprite.bottom < 32:
-                sprite.bottom = 32
+            if sprite.center_x < sprite.width / 2:
+                sprite.center_x = sprite.width / 2
+            elif sprite.center_x > vc.SCREEN_WIDTH - sprite.width / 2:
+                sprite.center_x = vc.SCREEN_WIDTH - sprite.width / 2
+            if sprite.center_y < sprite.height / 2:
+                sprite.center_y = sprite.height / 2
+            elif sprite.center_y > vc.SCREEN_HEIGHT - sprite.height / 2:
+                sprite.center_y = vc.SCREEN_HEIGHT - sprite.height / 2
 
     def check_exit_tile_collision(self):
         if arcade.check_for_collision_with_list(self.player_sprite, self.exit):
             game_over_view = new_screens.GameOverView()
             self.window.show_view(game_over_view)
 
-
     def player_portal_collision_handler(self):
+<<<<<<< HEAD
         collision_portal_list = arcade.check_for_collision_with_list(self.player_sprite, self.portal_walls) #CHANGE BACK TO PORTAL SPRITES
+=======
+        collision_portal_list = arcade.check_for_collision_with_list(self.player_sprite, self.portal_walls) #TODO: CHANGE BACK TO PORTAL SPRITES
+
+        exit_portal = None
+>>>>>>> 3eb1c1e239b15948d05ac88cdb4487c98f0844d5
         if len(collision_portal_list) == 0:
             return
         entry_portal = collision_portal_list[0]
@@ -362,6 +454,18 @@ class GameView(arcade.View):
 
 
 
+    def update_music(self):
+        stream_position = self.music.get_stream_position(
+            self.current_song_player)
+        if stream_position == 0.0:
+            self.advance_song()
+            self.play_song()
+
+    def advance_song(self):
+        self.current_song_index += 1
+        if self.current_song_index >= len(self.music_list):
+            self.current_song_index = 0
+
     def on_draw(self):
         self.clear()
         self.background.draw()
@@ -373,16 +477,14 @@ class GameView(arcade.View):
         self.exit.draw()
         self.sprite_list.draw()
         self.bullet_list.draw()
-        # self.blue_portal_list.draw()
-        # self.orange_portal_list.draw()
-        self.explosions_list.draw()
+        self.blue_portal_sprite.draw()
+        self.orange_portal_sprite.draw()
 
     # Shoot portal to mouse location at mouse click
     def on_mouse_press(self, x: int, y: int, button: int, modifiers: int):
         # Create a 'bullet' laser w/ sound
         arcade.play_sound(self.portal_gun_sound)
         bullet = arcade.Sprite(":resources:images/space_shooter/laserBlue01.png", vc.SCALING_LASER)
-        # bullet = arcade.Sprite(ASSETS_PATH/"images/SPRITES/misc/shot/shot-2.png", vc.SCALING_LASER)
 
         # Position the bullet at the player's current location
         start_x = self.player_sprite.center_x
@@ -411,13 +513,11 @@ class GameView(arcade.View):
     def find_exit_portal(self, entry_portal):
         ct = 0
         exit_portal = None
-        for p in self.portal_walls:  #CHANGE BACK TO PORTAL SPRITES
+        for p in self.portal_walls:  # CHANGE BACK TO PORTAL SPRITES
             if p is not entry_portal:
                 exit_portal = p
                 #break
             #ct += 1
             #if ct > 3:
                # break
-
         return exit_portal
-
