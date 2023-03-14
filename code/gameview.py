@@ -37,7 +37,6 @@ class GameView(arcade.View):
 
         self.player_sprite = None
 
-
         # columns = 2
         # count = 4
         # sprite_width = 100
@@ -78,22 +77,22 @@ class GameView(arcade.View):
         self.S_pressed: bool = False
 
         # Load sounds:
-        self.portal_gun_sound = arcade.sound.load_sound(ASSETS_PATH/"sounds/forceField_000.wav")
-        self.hit_sound = arcade.sound.load_sound(ASSETS_PATH/"sounds/doorOpen_002.wav")
-        self.miss_sound = arcade.sound.load_sound(ASSETS_PATH/"sounds/laserLarge_000.wav")
+        self.portal_gun_sound = arcade.sound.load_sound(
+            ASSETS_PATH/"sounds/forceField_000.wav")
+        self.hit_sound = arcade.sound.load_sound(
+            ASSETS_PATH/"sounds/doorOpen_002.wav")
+        self.miss_sound = arcade.sound.load_sound(
+            ASSETS_PATH/"sounds/laserLarge_000.wav")
         self.portal_gun_sound = arcade.sound.load_sound(
             ":resources:sounds/lose2.wav")
         self.hit_sound = arcade.sound.load_sound(
             ":resources:sounds/upgrade1.wav")
-
 
         # Variables used to manage music
         self.music_list = []
         self.current_song_index = 0
         self.current_song_player = None
         self.music = None
-
-
 
     def setup(self):
 
@@ -114,7 +113,6 @@ class GameView(arcade.View):
         self.blue_portal_list = arcade.SpriteList()
         self.orange_portal_list = arcade.SpriteList()
         self.explosions_list = arcade.SpriteList()
-
 
     def map_setup(self):
         # Map name
@@ -161,8 +159,10 @@ class GameView(arcade.View):
         self.sprite_list.append(self.player_sprite)
 
         # Test that portal sprite can be loaded from path as sprite:
-        self.blue_portal_sprite = arcade.Sprite(ASSETS_PATH/"images/SPRITES/portal_spritesheets/blue_portal.png", .3)
-        self.orange_portal_sprite = arcade.Sprite(ASSETS_PATH/"images/SPRITES/portal_spritesheets/orange_portal.png", .3)
+        self.blue_portal_sprite = arcade.Sprite(
+            ASSETS_PATH/"images/SPRITES/portal_spritesheets/blue_portal.png", .3)
+        self.orange_portal_sprite = arcade.Sprite(
+            ASSETS_PATH/"images/SPRITES/portal_spritesheets/orange_portal.png", .3)
 
         # self.sprite_list.append(self.portal_sprite)
 
@@ -425,10 +425,15 @@ class GameView(arcade.View):
     def check_exit_tile_collision(self):
         if arcade.check_for_collision_with_list(self.player_sprite, self.exit):
             game_over_view = new_screens.GameOverView()
+            self.pause_music()
             self.window.show_view(game_over_view)
 
+    def pause_music(self):
+        self.current_song_player.pause()
+
     def player_portal_collision_handler(self):
-        collision_portal_list = arcade.check_for_collision_with_list(self.player_sprite, self.portal_walls) #TODO: CHANGE BACK TO PORTAL SPRITES
+        collision_portal_list = arcade.check_for_collision_with_list(
+            self.player_sprite, self.portal_walls)  # TODO: CHANGE BACK TO PORTAL SPRITES
 
         exit_portal = None
         if len(collision_portal_list) == 0:
@@ -439,7 +444,8 @@ class GameView(arcade.View):
         self.player_sprite = player.Player(self.ladders)
         self.sprite_list.append(self.player_sprite)
 
-        self.player_sprite.position = self.player_sprite.portal_physics_handler(entry_portal, exit_portal)
+        self.player_sprite.position = self.player_sprite.portal_physics_handler(
+            entry_portal, exit_portal)
         self.physics_engine.add_sprite(self.player_sprite,
                                        friction=pc.PLAYER_FRICTION,
                                        mass=pc.PLAYER_MASS,
@@ -447,8 +453,6 @@ class GameView(arcade.View):
                                        collision_type="player",
                                        max_horizontal_velocity=pc.PLAYER_MAX_SPEED_HORIZ,
                                        max_vertical_velocity=pc.PLAYER_MAX_SPEED_VERT)
-
-
 
     def update_music(self):
         stream_position = self.music.get_stream_position(
@@ -480,7 +484,8 @@ class GameView(arcade.View):
     def on_mouse_press(self, x: int, y: int, button: int, modifiers: int):
         # Create a 'bullet' laser w/ sound
         arcade.play_sound(self.portal_gun_sound)
-        bullet = arcade.Sprite(":resources:images/space_shooter/laserBlue01.png", vc.SCALING_LASER)
+        bullet = arcade.Sprite(
+            ":resources:images/space_shooter/laserBlue01.png", vc.SCALING_LASER)
 
         # Position the bullet at the player's current location
         start_x = self.player_sprite.center_x
@@ -512,8 +517,8 @@ class GameView(arcade.View):
         for p in self.portal_walls:  # CHANGE BACK TO PORTAL SPRITES
             if p is not entry_portal:
                 exit_portal = p
-                #break
+                # break
             #ct += 1
-            #if ct > 3:
+            # if ct > 3:
                # break
         return exit_portal
