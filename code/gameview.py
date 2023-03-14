@@ -428,13 +428,9 @@ class GameView(arcade.View):
             self.window.show_view(game_over_view)
 
     def player_portal_collision_handler(self):
-<<<<<<< HEAD
-        collision_portal_list = arcade.check_for_collision_with_list(self.player_sprite, self.portal_walls) #CHANGE BACK TO PORTAL SPRITES
-=======
         collision_portal_list = arcade.check_for_collision_with_list(self.player_sprite, self.portal_walls) #TODO: CHANGE BACK TO PORTAL SPRITES
 
         exit_portal = None
->>>>>>> 3eb1c1e239b15948d05ac88cdb4487c98f0844d5
         if len(collision_portal_list) == 0:
             return
         entry_portal = collision_portal_list[0]
