@@ -13,13 +13,13 @@ class TitleView(arcade.View):
 
     def __init__(self):
         super().__init__()
-        arcade.set_background_color(arcade.color_from_hex_string("27a7d8"))
+        arcade.set_background_color(arcade.color_from_hex_string("000000"))
         self.texture = arcade.load_texture(path.TITLE_PATH)
         self.background_music = arcade.load_sound(path.NEW_SCREENS_MUSIC_PATH)
 
     def on_show_view(self):
         """ This is run once when we switch to this view """
-        arcade.set_background_color(arcade.color_from_hex_string("27a7d8"))
+        arcade.set_background_color(arcade.color_from_hex_string("000000"))
         arcade.set_viewport(0, self.window.width, 0, self.window.height)
         self.music_player = self.background_music.play(MUSIC_VOLUME, loop=True)
 

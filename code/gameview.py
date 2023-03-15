@@ -7,7 +7,6 @@ import math
 import arcade
 import time
 import player
-import portal
 import visual_constants as vc
 import physics_constants as pc
 import new_screens
@@ -30,33 +29,8 @@ class GameView(arcade.View):
         self.buildings = None
         self.exit = None
         self.portal_walls = None
-        self.portal_sprite = None
-        self.blue_portal_texture_list = []
-        self.orange_portal_texture_list = []
-        self.explosion_texture_list = []
-
+        # self.portal_sprite = None
         self.player_sprite = None
-
-
-        # columns = 2
-        # count = 4
-        # sprite_width = 100
-        # sprite_height = 100
-        # filename_blue = ASSETS_PATH/"images/SPRITES/misc/portals/blue/blue_portal_spritesheet.png"
-        # filename_orange = ASSETS_PATH/"images/SPRITES/misc/portals/orange/orange_portal_spritesheet.png"
-
-        columns = 16
-        count = 60
-        sprite_width = 256
-        sprite_height = 256
-        file_name = ":resources:images/spritesheets/explosion.png"
-        self.explosion_texture_list = arcade.load_spritesheet(
-            file_name, sprite_width, sprite_height, columns, count)
-
-        # self.blue_portal_texture_list = arcade.load_spritesheet(
-        #     filename_blue, sprite_width, sprite_height, columns, count)
-        # self.orange_portal_texture_list = arcade.load_spritesheet(
-        #     filename_orange, sprite_width, sprite_height, columns, count)
 
         # Container to hold sprite lists
         self.sprite_list = None
@@ -64,11 +38,8 @@ class GameView(arcade.View):
         self.portal_list = []
         self.blue_portal_sprite = None
         self.orange_portal_sprite = None
-
         self.player_list = None
-
         self.physics_engine = Optional[arcade.PymunkPhysicsEngine]
-
         self.level = 1
 
         # Variables to track which keys are pressed
@@ -77,14 +48,10 @@ class GameView(arcade.View):
         self.W_pressed: bool = False
         self.S_pressed: bool = False
 
-        # Load sounds:
+        # Use the .wav sounds for the portal effects
         self.portal_gun_sound = arcade.sound.load_sound(ASSETS_PATH/"sounds/forceField_000.wav")
         self.hit_sound = arcade.sound.load_sound(ASSETS_PATH/"sounds/doorOpen_002.wav")
         self.miss_sound = arcade.sound.load_sound(ASSETS_PATH/"sounds/laserLarge_000.wav")
-        self.portal_gun_sound = arcade.sound.load_sound(
-            ":resources:sounds/lose2.wav")
-        self.hit_sound = arcade.sound.load_sound(
-            ":resources:sounds/upgrade1.wav")
 
 
         # Variables used to manage music
@@ -111,10 +78,6 @@ class GameView(arcade.View):
 
         self.music_setup()
         self.bullet_list = arcade.SpriteList()
-        self.blue_portal_list = arcade.SpriteList()
-        self.orange_portal_list = arcade.SpriteList()
-        self.explosions_list = arcade.SpriteList()
-
 
     def map_setup(self):
         # Map name
@@ -144,9 +107,6 @@ class GameView(arcade.View):
         self.sprite_list = arcade.SpriteList()
         self.bullet_list = arcade.SpriteList()
         self.portal_list = arcade.SpriteList()
-        # self.bullet_list = arcade.SpriteList()
-        # self.blue_portal_list = arcade.SpriteList()
-        # self.orange_portal_list = arcade.SpriteList()
 
         # Create player sprite
         # NOTE: Another parameter could be added to this class to
@@ -349,7 +309,6 @@ class GameView(arcade.View):
                 elif (self.portal_list[0] == blue_portal) and len(self.portal_list) == 2:
                     self.portal_list.pop(0)
                     self.portal_list.update()
-                    # blue_portal.remove_from_sprite_lists()
                     blue_portal.center_x = portal_wall_hit[0].center_x
                     blue_portal.center_y = portal_wall_hit[0].center_y
                     blue_portal.update()
@@ -357,7 +316,6 @@ class GameView(arcade.View):
                 elif self.portal_list[0] == orange_portal and len(self.portal_list) == 2:
                     self.portal_list.pop(0)
                     self.portal_list.update()
-                    # orange_portal.remove_from_sprite_lists()
                     orange_portal.center_x = portal_wall_hit[0].center_x
                     orange_portal.center_y = portal_wall_hit[0].center_y
                     orange_portal.update()
@@ -372,10 +330,6 @@ class GameView(arcade.View):
 
             if bullet.bottom > vc.SCREEN_WIDTH or bullet.top < 0 or bullet.right < 0 or bullet.left > vc.SCREEN_WIDTH:
                 bullet.remove_from_sprite_lists()
-
-            # if len(hit_list) > 2:
-            #     for portal in hit_list:
-            #         portal.remove_from_sprite_lists()
 
         self.update_music()
 
