@@ -105,10 +105,9 @@ class GameOverView(arcade.View):
     def on_mouse_leave(self, x: float, y: float):
         self.selected = False
 
-# TODO: add option to quit?
-#     def on_mouse_press(self, _x, _y, _button, _modifiers):
-#         title_view = TitleView()
-#         self.window.show_view(title_view)
+    def on_mouse_press(self, _x, _y, _button, _modifiers):
+        title_view = TitleView()
+        self.window.show_view(title_view)
 
 
 class PauseView(arcade.View):
