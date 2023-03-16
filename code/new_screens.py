@@ -168,6 +168,7 @@ class PauseView(arcade.View):
             self.window.show_view(self.game_view)
         elif key == arcade.key.ENTER:
             game_over_view = GameOverView()
+            self.game_view.pause_music()
             self.window.show_view(game_over_view)
 
     def on_mouse_press(self, _x, _y, _button, _modifiers):
