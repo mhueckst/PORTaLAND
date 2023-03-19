@@ -29,8 +29,10 @@ class GameView(arcade.View):
         self.buildings = None
         self.exit = None
         self.portal_walls = None
-        # self.portal_sprite = None
         self.player_sprite = None
+        self.explosions_list = arcade.SpriteList()
+        self.blue_portal_sprite = None
+        self.orange_portal_sprite = None
 
         # columns = 2
         # count = 4
@@ -56,9 +58,10 @@ class GameView(arcade.View):
         self.sprite_list = None
         self.bullet_list = None
         self.portal_list = []
-        self.blue_portal_sprite = None
-        self.orange_portal_sprite = None
+        self.blue_portal_list = arcade.SpriteList()
+        self.orange_portal_list = arcade.SpriteList()
         self.player_list = None
+
         self.physics_engine = Optional[arcade.PymunkPhysicsEngine]
         self.level = 1
 
@@ -130,6 +133,7 @@ class GameView(arcade.View):
         self.ladders = tile_map.sprite_lists["ladders"]
         self.exit = tile_map.sprite_lists["exit"]
         self.portal_walls = tile_map.sprite_lists["portal walls"]
+        # Remove inadvertent extra portal wall list entries
         ct = 5
         while ct > 0:
             self.portal_walls.pop()
@@ -315,9 +319,10 @@ class GameView(arcade.View):
         # Check if player encountered exit tile
         self.check_exit_tile_collision()
 
-        self.player_portal_collision_handler()
         self.bullet_list.update()
         self.portal_list.update()
+        if len(self.portal_list) > 1:
+            self.player_portal_collision_handler()
 
         for bullet in self.bullet_list:
             portal_wall_hit = arcade.check_for_collision_with_list(
@@ -422,19 +427,18 @@ class GameView(arcade.View):
 
     def player_portal_collision_handler(self):
         collision_portal_list = arcade.check_for_collision_with_list(
-            self.player_sprite, self.portal_walls)  # TODO: CHANGE BACK TO PORTAL SPRITES
+            self.player_sprite, self.portal_list)
 
-        exit_portal = None
         if len(collision_portal_list) == 0:
             return
         entry_portal = collision_portal_list[0]
-        exit_portal = self.find_exit_portal(entry_portal)
+        exit_portal, exit_wall = self.find_exit_portal(entry_portal)
         self.player_sprite.remove_from_sprite_lists()
         self.player_sprite = player.Player(self.ladders)
         self.sprite_list.append(self.player_sprite)
 
-        self.player_sprite.position = self.player_sprite.portal_physics_handler(
-            entry_portal, exit_portal)
+        # update player position before adding back to physics engine
+        self.player_sprite.portal_travel_mechanics(exit_portal, exit_wall)
         self.physics_engine.add_sprite(self.player_sprite,
                                        friction=pc.PLAYER_FRICTION,
                                        mass=pc.PLAYER_MASS,
@@ -442,6 +446,18 @@ class GameView(arcade.View):
                                        collision_type="player",
                                        max_horizontal_velocity=pc.PLAYER_MAX_SPEED_HORIZ,
                                        max_vertical_velocity=pc.PLAYER_MAX_SPEED_VERT)
+
+    def find_exit_portal(self, entry_portal):
+        exit_portal = None
+        for p in self.portal_list:
+            if p is not entry_portal:
+                exit_portal = p
+        exit_wall = None
+        for w in self.portal_walls:
+            if w.center_x == exit_portal.center_x and w.center_y == exit_portal.center_y:
+                exit_wall = w
+        return exit_portal, exit_wall
+
 
     def update_music(self):
         stream_position = self.music.get_stream_position(
@@ -501,13 +517,13 @@ class GameView(arcade.View):
         self.bullet_list.append(bullet)
 
     def find_exit_portal(self, entry_portal):
-        ct = 0
         exit_portal = None
-        for p in self.portal_walls:  # CHANGE BACK TO PORTAL SPRITES
+        for p in self.portal_list:
             if p is not entry_portal:
                 exit_portal = p
-                # break
-            #ct += 1
-            # if ct > 3:
-               # break
-        return exit_portal
+        exit_wall = None
+        for w in self.portal_walls:
+            if w.center_x == exit_portal.center_x and w.center_y == exit_portal.center_y:
+                exit_wall = w
+        return exit_portal, exit_wall
+
