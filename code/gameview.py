@@ -437,7 +437,7 @@ class GameView(arcade.View):
         self.player_sprite = player.Player(self.ladders)
         self.sprite_list.append(self.player_sprite)
 
-        # update player position before adding back to physics engine
+        # tell player to set new position before adding back to physics engine
         self.player_sprite.portal_travel_mechanics(exit_portal, exit_wall)
         self.physics_engine.add_sprite(self.player_sprite,
                                        friction=pc.PLAYER_FRICTION,
@@ -515,15 +515,3 @@ class GameView(arcade.View):
 
         # Add the bullet to the appropriate lists
         self.bullet_list.append(bullet)
-
-    def find_exit_portal(self, entry_portal):
-        exit_portal = None
-        for p in self.portal_list:
-            if p is not entry_portal:
-                exit_portal = p
-        exit_wall = None
-        for w in self.portal_walls:
-            if w.center_x == exit_portal.center_x and w.center_y == exit_portal.center_y:
-                exit_wall = w
-        return exit_portal, exit_wall
-
